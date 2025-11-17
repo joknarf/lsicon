@@ -109,20 +109,14 @@ BEGIN {
     
     FS="\t"
     prevempty=0
+    nr=1
 }
 # handle ls error messages
-/^(ls|gls):/ { print $0 >"/dev/stderr"; next }
+/^(ls|gls):/ { print colors["lred"] $0 RESET >"/dev/stderr"; nr=1; next }
 # gnu ls bug directory title line with not escaped spaces / best effort
-NR==1 && /:$/ && !/\\ / && !/^ *[0-9]+ /{ gsub("\\\\",""); print $0; next }
-prevempty && /:$/ { gsub("\\\\",""); prevempty=0; print $0; next }
-{ # preprocess line to have tab field separator
-    sub(/^ */, "")           # remove leading spaces
-    gsub(/\\ /, "\\x20")     # protect escaped spaces (\ )
-    gsub(/ +/, "\t")         # replace remaining (unescaped) spaces with tabs
-    gsub(/\\x20/, " ")       # restore escaped spaces
-    gsub(/\\\\/,"\\")        # restore backslashes
-    $1=$1                    # force field re-evaluation
-}
+nr==1 && /:$/ && !/\\ / && !/^[dlsbpc-]([r-][w-][xSsTt-]){3} +[0-9]+ / { gsub(/\\/,""); nr=0; print $0; next }
+prevempty && /:$/ { gsub(/\\/,""); prevempty=0; print $0; next }
+{ prevempty=0; nr=0 }
 $0=="" {
     prevempty=1
     if (LONG_FLAG) print_long()
@@ -131,7 +125,14 @@ $0=="" {
     n=0; max_links=0; max_owner=0; max_group=0; max_size=0; max_inums=0; maxw=0;
     next
 }
-$1=="total" { total_line = $0; next }
+/^total / { total_line = $0; next }
+{ # preprocess line to have tab field separator
+    sub(/^ */, "")           # remove leading spaces
+    gsub(/\\ /, "\\x20")     # protect escaped spaces (\ )
+    gsub(/ +/, "\t")         # replace remaining (unescaped) spaces with tabs
+    gsub(/\\x20/, " ")       # restore escaped spaces
+    gsub(/\\\\/,"\\")        # restore backslashes
+}
 {
     c = 1
     if (INUM_FLAG) inum=$(c++)
