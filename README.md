@@ -9,14 +9,15 @@ Simple ls command enhancer in less than 12K (only uses bash/ls/awk)
 
 ![image](https://github.com/user-attachments/assets/85f3031a-c7e7-4add-a6eb-30b14efb26cc)
 
-Comparison to other tools (/usr containing ~150000 files):
+Much faster than other tools (here /usr containing ~150000 files):
 
-| Tool       | Command          | Time (wsl ubuntu) | Time (centos9)  |
-|------------|------------------|-------------------|-----------------|
-| GNU ls     | ls -lR /usr      | 10.250s           | 2.011s          |
-| **lsicon** | ls+ -lR /usr     | 10.878s           | 3.202s          |
-| lsd        | lsd -lR /usr     | 27.941s           | 8.564s          |
-| eza        | eza --icons /usr | 31.340s           | 8.795s          |
+| Tool       | Command            | Time (wsl ubuntu)  | Time (centos9)   |
+|------------|--------------------|--------------------|------------------|
+|            |                    | `tty       notty`  | `tty     notty`  |
+| GNU ls     | `ls -lR /usr     ` | `10.250s   5.964s` | `2.011s  1.049s` |   
+| **lsicon** | `ls+ -lR /usr    ` | `10.878s   6.013s` | `3.202s  1.065s` |   
+| lsd        | `lsd -lR /usr    ` | `27.941s  10.743s` | `8.564s  2.627s` |
+| eza        | `eza --icons /usr` | `31.340s  24.218s` | `8.795s  4.751s` |
 
 
 ## Prerequisites

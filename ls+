@@ -171,11 +171,10 @@ NR==1 && !/\\ / && !/^ *[0-9]+ /{ gsub("\\\\",""); print $0; next }
 prevempty && /:$/ { gsub("\\\\",""); prevempty=0; print $0; next }
 { # preprocess line to have tab field separator
     sub(/^ */, "")           # remove leading spaces
-    gsub(/\\\\/,"\\\\\\\\")  # temporarily double all backslashes (to keep them safe)
     gsub(/\\ /, "\\x20")     # protect escaped spaces (\ )
     gsub(/ +/, "\t")         # replace remaining (unescaped) spaces with tabs
     gsub(/\\x20/, " ")       # restore escaped spaces
-    gsub(/\\\\\\\\/,"\\\\")  # restore backslashes
+    gsub(/\\\\/,"\\")        # restore backslashes
     $1=$1                    # force field re-evaluation
 }
 $0=="" {
