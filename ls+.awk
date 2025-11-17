@@ -113,7 +113,7 @@ BEGIN {
 # handle ls error messages
 /^(ls|gls):/ { print $0 >"/dev/stderr"; next }
 # gnu ls bug directory title line with not escaped spaces / best effort
-NR==1 && !/\\ / && !/^ *[0-9]+ /{ gsub("\\\\",""); print $0; next }
+NR==1 && /:$/ && !/\\ / && !/^ *[0-9]+ /{ gsub("\\\\",""); print $0; next }
 prevempty && /:$/ { gsub("\\\\",""); prevempty=0; print $0; next }
 { # preprocess line to have tab field separator
     sub(/^ */, "")           # remove leading spaces
