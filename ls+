@@ -124,7 +124,6 @@ function print_long() {
             printf(" %s%*s", colors[COL_CONTEXT], max_context,context_a[i])
         printf(" %s%*s %s %s\n", colors[COL_SIZE], max_size, size_a[i], colors[COL_DATE] date_a[i], dec_long_a[i])
     }
-    fflush()
 }
 function fgcol(num) {
     return ESC num "m"
@@ -168,7 +167,8 @@ BEGIN {
 # handle ls error messages
 /^(ls|gls):/ { print $0 >"/dev/stderr"; next }
 # gnu ls bug directory title line with not escaped spaces / best effort
-/:$/ && (prevempty ||  (NR==1 && !/\\ / && !/^ *[0-9]+ /)){ gsub("\\\\",""); prevempty=0; print $0; next }
+NR==1 && !/\\ / && !/^ *[0-9]+ /{ gsub("\\\\",""); print $0; next }
+prevempty && /:$/ { gsub("\\\\",""); prevempty=0; print $0; next }
 { # preprocess line to have tab field separator
     sub(/^ */, "")           # remove leading spaces
     gsub(/\\\\/,"\\\\\\\\")  # temporarily double all backslashes (to keep them safe)
