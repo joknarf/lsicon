@@ -21,6 +21,7 @@ Simple ls command enhancer in less than 12K (only uses bash/ls/awk)
 
 You can use a plugin manager, like the famous [thefly](https://github.com/joknarf/thefly)
 ```
+. <(curl https://raw.githubusercontent.com/joknarf/thefly/main/thefly) install
 fly add joknarf/lsicon
 ```
 or just clone the repo, and put `ls+*` files in dir in your PATH
