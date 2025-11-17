@@ -14,17 +14,18 @@ Much faster than other tools (here /usr containing ~150000 files):
 | Tool       | Command                | Time (wsl ubuntu)  | Time (centos9)   |
 |------------|------------------------|--------------------|------------------|
 |            |                        | `tty       notty`  | `tty     notty`  |
-| GNU ls     | `ls -lR /usr         ` | `10.250s   5.964s` | `2.011s  1.049s` |   
-| **lsicon** | `ls+ -lR /usr        ` | `10.878s   6.016s` | `3.202s  1.269s` |   
-| lsd        | `lsd -lR /usr        ` | `27.941s  10.743s` | `8.564s  2.627s` |
-| eza        | `eza --icons -lR /usr` | `31.340s  24.218s` | `8.795s  4.751s` |
+| GNU ls     | `ls -lR --color /usr ` | `10.250s   6.001s` | `2.011s  1.049s` |   
+| **lsicon** | `ls+ -lR /usr        ` | `10.878s   6.096s` | `3.202s  1.269s` |   
+| lsd        | `lsd -lR /usr        ` | `27.941s  13.698s` | `8.564s  2.627s` |
+| eza        | `eza --icons -lR /usr` | `31.340s  28.509s` | `8.795s  4.751s` |
 
 
 ## Prerequisites
 
 * GNU ls
-  * on BSD/MacOS coreutils package needed
-* awk
+  * on BSD/MacOS/Alpine coreutils package needed
+* GNU awk
+  * on BSD/MacOS/Alpine gawk package needed
 * bash
 * Nerd Font in your Terminal
 
