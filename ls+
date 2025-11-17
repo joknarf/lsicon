@@ -47,6 +47,7 @@ TERM_COLS=$(tput cols) 2>/dev/null
 : ${ICON_FILE:=${0%/*}/ls+.icons}
 : ${COLOR_FILE:=${0%/*}/ls+.colors}
 
+set -o pipefail
 command $ls -1 "${ls_meta_args[@]}" | awk -v TERMW="$TERM_COLS" \
     -v LONG_FLAG="$LONG" -v CONT_FLAG="$CONTEXT" -v INUM_FLAG="$INUM" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" -f /dev/fd/3 3<<'AWK'
 function print_multic() {
@@ -231,4 +232,3 @@ END {
 }
 AWK
 
-exit 0
