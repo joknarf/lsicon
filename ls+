@@ -55,7 +55,6 @@ function print_multic() {
     bestC = 1
     pad = 2
     width = TERMW
-    
     # Upper bound for number of columns
     Cmax = 1 + int((width - maxw) / (minw + pad))
     if (Cmax < 1) Cmax = 1
@@ -88,6 +87,7 @@ function print_multic() {
             break      # largest possible C found → optimal
         }
     }
+    if (title) print title;
     # If only one column → trivial print, fastest path
     if (bestC == 1) {
         for (i = 1; i <= n; i++)
@@ -108,8 +108,10 @@ function print_multic() {
         }
         printf("\n")
     }
+    fflush()
 }
 function print_long() {
+    if (title) print title;
     if (total_line != "") print total_line
     for (i=1;i<=n;i++) {
         if (name_a[i] == "" || dec_long_a[i] == "") continue
@@ -121,6 +123,7 @@ function print_long() {
             printf(" %s%*s", colors[COL_CONTEXT], max_context,context_a[i])
         printf(" %s%*s %s %s\n", colors[COL_SIZE], max_size, size_a[i], colors[COL_DATE] date_a[i], dec_long_a[i])
     }
+    fflush()
 }
 function fgcol(num) {
     return ESC num "m"
@@ -160,6 +163,7 @@ BEGIN {
     
     FS="\t"
 }
+$1 !~ /^[0-9]+$/ && /:$/ { title=$0; next }
 { # preprocess line to have tab field separator
     sub(/^ */, "")           # remove leading spaces
     gsub(/\\\\/,"\\\\\\\\")  # temporarily double all backslashes (to keep them safe)
@@ -169,7 +173,6 @@ BEGIN {
     gsub(/\\\\\\\\/,"\\\\")  # restore backslashes
     $1=$1                    # force field re-evaluation
 }
-$1 !~ /^[0-9]+$/ && /:$/ { gsub("\t"," "); print $0; next }
 $0=="" {
     if (LONG_FLAG) print_long()
     else print_multic()
