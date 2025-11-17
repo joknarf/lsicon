@@ -6,7 +6,7 @@
 
 type gls >/dev/null 2>&1 && ls="gls" || ls="ls"
 
-CONTEXT= INUM= LONG=
+CONTEXT= INUM= LONG= ONE=
 ARGS=()
 for a in "$@"; do
     case "$a" in
@@ -17,10 +17,12 @@ for a in "$@"; do
         --context) CONTEXT=1; ARGS+=("$a") ;;
         -i) INUM=1; ARGS+=("$a") ;;
         --inum) INUM=1; ARGS+=("$a") ;;
+        -1) ONE=1; ARGS+=("$a") ;;
         -[!-]*) 
             [[ "$a" == *l* ]] && LONG=1
             [[ "$a" == *Z* ]] && CONTEXT=1
             [[ "$a" == *i* ]] && INUM=1
+            [[ "$a" == *1* ]] && ONE=1
             ARGS+=("$a")
         ;;
         *) ARGS+=("$a") ;;
@@ -49,7 +51,7 @@ TERM_COLS=$(tput cols) 2>/dev/null
 
 set -o pipefail
 command $ls -1 "${ls_meta_args[@]}" | awk -v TERMW="$TERM_COLS" \
-    -v LONG_FLAG="$LONG" -v CONT_FLAG="$CONTEXT" -v INUM_FLAG="$INUM" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" -f /dev/fd/3 3<<'AWK'
+    -v LONG_FLAG="$LONG" -v CONT_FLAG="$CONTEXT" -v INUM_FLAG="$INUM" -v ONE_FLAG="$ONE" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" -f /dev/fd/3 3<<'AWK'
 function print_multic() {
 # multicolumn output computation
     bestC = 1
@@ -59,6 +61,7 @@ function print_multic() {
     Cmax = 1 + int((width - maxw) / (minw + pad))
     if (Cmax < 1) Cmax = 1
     if (Cmax > n) Cmax = n
+    if (ONE_FLAG) { Cmax=1 }
     colw[1] = 0
     # Try possible column counts from Cmax down to 1
     for (C = Cmax; C >= 1; C--) {
@@ -162,8 +165,10 @@ BEGIN {
     COL_DEFAULT=EXT_COLOR["default"]
     
     FS="\t"
+    prevempty=0
 }
-$1 !~ /^[0-9]+$/ && /:$/ { title=$0; next }
+# gnu ls bug directory title line with not escaped spaces / best effort
+/:$/ && (prevempty ||  (NR==1 && !/\\ / && !/^ *[0-9]+ /)){ gsub("\\\\",""); prevempty=0; title=$0; next }
 { # preprocess line to have tab field separator
     sub(/^ */, "")           # remove leading spaces
     gsub(/\\\\/,"\\\\\\\\")  # temporarily double all backslashes (to keep them safe)
@@ -174,6 +179,7 @@ $1 !~ /^[0-9]+$/ && /:$/ { title=$0; next }
     $1=$1                    # force field re-evaluation
 }
 $0=="" {
+    prevempty=1
     if (LONG_FLAG) print_long()
     else print_multic()
     print ""
@@ -229,7 +235,6 @@ $1=="total" { total_line = $0; next }
 }
 
 END {
-    if (n == 0) exit
     if (LONG_FLAG) print_long()
     else print_multic()
 }
