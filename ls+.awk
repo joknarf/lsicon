@@ -133,18 +133,14 @@ $0=="" {
 }
 $1=="total" { total_line = $0; next }
 {
-    original_line = $0
-
-    inum = $1; perms = $2; links = $3; owner = $4; group = $5; 
-    if (CONT_FLAG) { 
-        context=$6; size = $7; date = $8 " " $9; fname=$10; target=$12
-    }else{
-       size = $6; date = $7 " " $8; fname=$9; target=$11
-    }
+    c = 1
+    if (INUM_FLAG) inum=$(c++)
+    perms = $(c++); links = $(c++); owner = $(c++); group = $(c++);
+    if (CONT_FLAG) context=$(c++) 
     # special handling for /dev with xx, yy instead of size
-    if (perms ~ /^c/ || perms ~ /^b/) {
-        size = $6 $7; date = $8 " " $9; fname = $10; target = $12
-    }
+    if (perms ~ /^c/ || perms ~ /^b/) size = $(c++)$(c++)
+    else size = $(c++)
+    date = $(c++) " " $(c++); fname=$(c++); target=$(c+1)
     is_dir = (substr(perms,1,1) == "d")
     is_link = (substr(perms,1,1) == "l")
     is_exe = (index(perms, "x") > 0)
