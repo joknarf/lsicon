@@ -52,7 +52,7 @@ You may want to replace the `ls` command with ls+ using:
 ```
 alias ls='ls+'
 ```
-By default with stdout not a tty, `ls+` fallback to ls command, if want to pipe to pager (less...):
+By default with stdout not a tty, `ls+` falls back to ls command, if want to pipe to pager (less...) with icons/colors:
 ```
 lz+ --color |less -RESX
 ```
