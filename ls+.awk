@@ -59,7 +59,8 @@ function print_multic() {
     fflush()
 }
 function print_long() {
-    if (total_line != "") print total_line
+    if (total_line) print total_line
+    total_line = ""
     for (i=1;i<=n;i++) {
         if (name_a[i] == "" || dec_long_a[i] == "") continue
         if (INUM_FLAG)
@@ -76,6 +77,11 @@ function fgcol(num) {
 }
 function fglcol(num) {
     return ESC num+60 "m"
+}
+function print_ls() {
+    if (LONG_FLAG) print_long()
+    else print_multic()
+    n=0; max_links=0; max_owner=0; max_group=0; max_size=0; max_inums=0; maxw=0;
 }
 BEGIN {
     while ((getline < iconfile) > 0)
@@ -112,26 +118,19 @@ BEGIN {
     nr=1
 }
 # handle ls error messages
-/^(ls|gls):/ { print colors["lred"] $0 RESET >"/dev/stderr"; nr=1; next }
+/^(ls|gls):/ { print_ls();print colors["lred"] $0 RESET >"/dev/stderr"; nr=1; next }
 # gnu ls bug directory title line with not escaped spaces / best effort
 nr==1 && /:$/ && !/\\ / && !/^[dlsbpc-]([r-][w-][xSsTt-]){3} +[0-9]+ / { gsub(/\\/,""); nr=0; print $0; next }
 prevempty && /:$/ { gsub(/\\/,""); prevempty=0; print $0; next }
 { prevempty=0; nr=0 }
-$0=="" {
-    prevempty=1
-    if (LONG_FLAG) print_long()
-    else print_multic()
-    print ""
-    n=0; max_links=0; max_owner=0; max_group=0; max_size=0; max_inums=0; maxw=0;
-    next
-}
+$0=="" { prevempty=1; print_ls(); print ""; next }
 /^total / { total_line = $0; next }
 { # preprocess line to have tab field separator
-    sub(/^ */, "")           # remove leading spaces
-    gsub(/\\ /, "\\x20")     # protect escaped spaces (\ )
-    gsub(/ +/, "\t")         # replace remaining (unescaped) spaces with tabs
-    gsub(/\\x20/, " ")       # restore escaped spaces
-    gsub(/\\\\/,"\\")        # restore backslashes
+    sub(/^ */, "")        # remove leading spaces
+    gsub(/\\ /, "\\x20")  # protect escaped spaces (\ )
+    gsub(/ +/, "\t")      # replace remaining (unescaped) spaces with tabs
+    gsub(/\\x20/, " ")    # restore escaped spaces
+    gsub(/\\\\/,"\\")     # restore backslashes
 }
 {
     c = 1
