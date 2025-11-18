@@ -72,6 +72,6 @@ You can customize all colors association :
 
 You can customize all theme colors :
 - editing `ls+.theme`
-- creating a `~/.config/ls+/colors` file
+- creating a `~/.config/ls+/theme` file
 - format of file : `<colorname> <r;g;b>`
 - creating an empty theme, will use standard 16 colors
