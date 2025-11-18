@@ -65,8 +65,34 @@ function print_long() {
         if (name_a[i] == "" || dec_long_a[i] == "") continue
         if (INUM_FLAG)
            printf("%s%*s ", colors[COL_INUM], max_inums, inums_a[i])
-        printf("%s%-*s %s%-*s %-*s",
-            colors[cols_a[i]], 11, perms_a[i], colors[COL_USER], max_owner, owner_a[i], max_group, group_a[i])
+        lcol = cols_a[i]
+        col = substr(lcol,2)
+        perms = perms_a[i]
+        perms_type = substr(perms,1,1)
+        perms_owner = substr(perms,2,3)
+        perms_group = substr(perms,5,3)
+        perms_other = substr(perms,8,3)
+        perms_acl = substr(perms,11,1)
+        if (perms_acl == "") perms_acl = " "
+        if (USER==owner_a[i]) {
+            col_perms_owner = colors["l" col]
+            col_owner = colors["l" COL_USER]
+        } else {
+            col_perms_owner = colors[col]
+            col_owner = colors[COL_USER]
+        }
+        if (group_a[i] in user_groups) {
+            col_perms_group = colors["l" col]
+            col_group = colors["l" COL_USER]
+        } else {
+            col_perms_group = colors[col]
+            col_group = colors[COL_USER]
+        }
+        #col_owner = (USER==owner_a[i] ? colors["l" col] : colors[col])
+        #col_group = (group_a[i] in user_groups ? colors["l" col] : colors[col])
+        perms = colors[lcol] perms_type col_perms_owner perms_owner col_perms_group perms_group colors[lcol] perms_other perms_acl
+        printf("%s %s%-*s %s%-*s",
+            perms, col_owner, max_owner, owner_a[i], col_group, max_group, group_a[i])
         if (CONT_FLAG)
             printf(" %s%*s", colors[COL_CONTEXT], max_context,context_a[i])
         printf(" %s%*s %s %s\n", colors[COL_SIZE], max_size, size_a[i], colors[COL_DATE] date_a[i], dec_long_a[i])
@@ -85,6 +111,8 @@ function print_ls() {
 }
 BEGIN {
     ESC="\033["
+    split(GROUPS, user_groups)
+    for(i in user_groups) user_groups[user_groups[i]]=1
     while ((getline < iconfile) > 0)
         for(i=2;i<=NF;i++) EXT_ICON[$i]=$1
     close(iconfile)

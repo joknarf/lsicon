@@ -48,11 +48,11 @@ done
 : ${ICON_FILE:=${0%/*}/ls+.icons}
 : ${COLOR_FILE:=${0%/*}/ls+.colors}
 : ${THEME_FILE:=${0%/*}/ls+.theme}
-
+USER_GROUPS=$(groups)
 TERM_COLS=$(tput cols) 2>/dev/null
 : ${TERM_COLS:=80}
 
 set -o pipefail
 $ls -1 "${ls_meta_args[@]}" 2>&1 | awk -v TERMW="$TERM_COLS" -v LONG_FLAG="$LONG" -v CONT_FLAG="$CONTEXT" \
   -v INUM_FLAG="$INUM" -v ONE_FLAG="$ONE" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" -v themefile="$THEME_FILE" \
-  -f ${0%/*}/ls+.awk
+  -v USER="$USER" -v GROUPS="$USER_GROUPS" -f ${0%/*}/ls+.awk
