@@ -69,3 +69,9 @@ You can customize all colors association :
 - editing `ls+.colors`
 - creating a `~/.config/ls+/colors` file
 - format of file : `<colorname> <ext> [<ext>...]`
+
+You can customize all theme colors :
+- editing `ls+.theme`
+- creating a `~/.config/ls+/colors` file
+- format of file : `<colorname> <r;g;b>`
+- creating an empty theme, will use standard 16 colors
