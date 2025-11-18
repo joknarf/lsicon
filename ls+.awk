@@ -84,18 +84,23 @@ function print_ls() {
     n=0; max_links=0; max_owner=0; max_group=0; max_size=0; max_inums=0; maxw=0;
 }
 BEGIN {
+    ESC="\033["
     while ((getline < iconfile) > 0)
         for(i=2;i<=NF;i++) EXT_ICON[$i]=$1
     close(iconfile)
     while ((getline < colorfile) > 0)
         for(i=2;i<=NF;i++) EXT_COLOR[$i]=$1
     close(colorfile)
-    ESC="\033["
+    # initialize basic colors
     split("black,red,green,yellow,blue,magenta,cyan,white", colors, ",")
     for(i=1;i<=8;i++) {
-        colors[colors[i]] = fgcol(i+29)
-        colors["l"colors[i]] = fglcol(i+29)
+         colors[colors[i]] = fgcol(i+29)
+         colors["l"colors[i]] = fglcol(i+29)
     }
+    # load theme colors
+    while ((getline < themefile) > 0)
+        if (NF==2)
+            colors[$1]=ESC "38;2;" $2 "m"
     RESET=ESC "0m"
     ICON_FOLDER=EXT_ICON["folder"]
     ICON_FILE=EXT_ICON["file"]
