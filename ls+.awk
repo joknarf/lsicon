@@ -155,7 +155,7 @@ BEGIN {
 # handle ls error messages
 /^(ls|gls):/ { print_ls();print colors["lred"] $0 RESET >"/dev/stderr"; nr=1; next }
 # gnu ls bug directory title line with not escaped spaces / best effort
-nr==1 && /:$/ && !/\\ / && !/^[dlsbpc-]([r-][w-][xSsTt-]){3} +[0-9]+ / { gsub(/\\/,""); nr=0; print $0; next }
+nr==1 && /:$/ && !/\\ / && !/(^| )[dlsbpc-]([r-][w-][xSsTt-]){3}[ .]? +[0-9]+ / { gsub(/\\/,""); nr=0; print $0; next }
 prevempty && /:$/ { gsub(/\\/,""); prevempty=0; print $0; next }
 { prevempty=0; nr=0 }
 $0=="" { prevempty=1; print_ls(); print ""; next }
