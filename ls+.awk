@@ -132,24 +132,31 @@ BEGIN {
         if (NF==2)
             colors[$1]=ESC "38;2;" $2 "m"
     RESET=ESC "0m"
-    ICON_FOLDER=EXT_ICON["folder"]
-    ICON_FILE=EXT_ICON["file"]
-    ICON_EXEC=EXT_ICON["exec"]
-    ICON_SYMLINK=EXT_ICON["symlink"]
-
-    COL_DIR=EXT_COLOR["folder"]
-    COL_EXE=EXT_COLOR["exec"]
-    COL_LINK=EXT_COLOR["symlink"]
-    COL_IMAGE=EXT_COLOR["image"]
     COL_DATE=EXT_COLOR["date"]
     COL_USER=EXT_COLOR["user"]
     COL_SIZE=EXT_COLOR["size"]
     COL_CONTEXT=EXT_COLOR["context"]
     COL_INUM=EXT_COLOR["inum"]
-    COL_DEFAULT=EXT_COLOR["default"]
-    COL_CLASSIFY["="] = ""
-    COL_CLASSIFY["*"] = COL_EXE
-    COL_CLASSIFY["/"] = COL_DIR
+    COL_TYPE["-"] = EXT_COLOR["file"]
+    COL_TYPE["d"] = EXT_COLOR["folder"]
+    COL_TYPE["p"] = EXT_COLOR["pipe"]
+    COL_TYPE["s"] = EXT_COLOR["socket"]
+    COL_TYPE["l"] = EXT_COLOR["symlink"]
+    COL_TYPE["x"] = EXT_COLOR["exec"]
+    COL_TYPE["b"] = EXT_COLOR["blockdev"]
+    COL_TYPE["c"] = EXT_COLOR["chardev"]
+    ICON_TYPE["-"] = EXT_ICON["file"]
+    ICON_TYPE["d"] = EXT_ICON["folder"]
+    ICON_TYPE["l"] = EXT_ICON["symlink"]
+    ICON_TYPE["p"] = EXT_ICON["pipe"]
+    ICON_TYPE["s"] = EXT_ICON["socket"]
+    ICON_TYPE["x"] = EXT_ICON["exec"]
+    ICON_TYPE["b"] = EXT_ICON["blockdev"]
+    ICON_TYPE["c"] = EXT_ICON["chardev"]
+    COL_CLASSIFY["|"] = EXT_COLOR["pipe"]
+    COL_CLASSIFY["="] = EXT_COLOR["socket"]
+    COL_CLASSIFY["*"] = EXT_COLOR["exec"]
+    COL_CLASSIFY["/"] = EXT_COLOR["folder"s]
     FS="\t"
     prevempty=0
     nr=1
@@ -180,34 +187,31 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
     else size = $(c++)
     date = $(c++) " " $(c++); fname=$(c++); target=$(c+1)
     file_type = substr(perms,1,1)
-    is_dir = (file_type == "d")
-    is_link = (file_type == "l")
-    is_socket (file_type == "s")
-    is_exe = (index(perms, "x") > 0)
     col_link = ""
-    if (is_link) {
+    if (file_type=="l") {
         last_char = (substr(target,length(target)))
         if (last_char in COL_CLASSIFY) {
             sub(/.$/,"",target)
             col_link = COL_CLASSIFY[last_char]
         }
-    } else if (substr(fname,length(fname)) in COL_CLASSIFY) {
+    } else if (substr(fname,length(fname)) in COL_CLASSIFY)
         sub(/.$/,"",fname)
-    }
     ext=""
-    if (match(fname, /\.([^.]+)$/, ex)) ext = tolower(ex[1])
-    icon = ICON_FILE; col = COL_DEFAULT;
-    if (is_link) { icon = ICON_SYMLINK; col = COL_LINK }
-    else if (is_dir) { icon = ICON_FOLDER; col = COL_DIR }
-    else if (is_exe) { icon = ICON_EXEC; col = COL_EXE }
-    else if (ext in EXT_COLOR) col = EXT_COLOR[ext]
-    if (ext in EXT_ICON && ! is_link) icon = EXT_ICON[ext]
+    if (match(fname, /\.[^.]+$/, ex)) ext = tolower(ex[0])
+    
+    col = COL_TYPE[file_type]
+    icon = ICON_TYPE[file_type]
+    if (file_type=="-" && (index(perms, "x") > 0)) {
+        col=COL_TYPE["x"]
+        icon=ICON_TYPE["x"]
+    } else if (ext in EXT_COLOR) col=EXT_COLOR[ext]
+    if (ext in EXT_ICON && file_type!="l") icon = EXT_ICON[ext]
 
     vlen = length(fname) + 2
     if (vlen > maxw) maxw = vlen
     if (n==1 || vlen < minw) minw = vlen
     display_name = fname
-    if (is_link && target != "") display_name = display_name " -> " colors["l"col_link] target
+    if (target != "") display_name = display_name " -> " colors["l"col_link] target
     dec_long = colors["l"col] icon " " display_name RESET
     dec_short = colors["l"col] icon " " fname RESET
 
