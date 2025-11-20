@@ -36,7 +36,7 @@ for a in "$@"; do
     esac
 done
 COLOR=''
-ls_meta_args=("-l" "--quoting-style=escape" "--color=never" "--time-style=+%y-%m-%d %H:%M")
+ls_meta_args=("-lF" "--quoting-style=escape" "--color=never" "--time-style=+%y-%m-%d %H:%M")
 for a in "${ARGS[@]}"; do
     case "$a" in
         --color*always|--color) COLOR=true ; continue ;;

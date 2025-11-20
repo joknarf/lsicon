@@ -147,7 +147,9 @@ BEGIN {
     COL_CONTEXT=EXT_COLOR["context"]
     COL_INUM=EXT_COLOR["inum"]
     COL_DEFAULT=EXT_COLOR["default"]
-    
+    COL_CLASSIFY["="] = ""
+    COL_CLASSIFY["*"] = COL_EXE
+    COL_CLASSIFY["/"] = COL_DIR
     FS="\t"
     prevempty=0
     nr=1
@@ -177,12 +179,23 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
     if (perms ~ /^c/ || perms ~ /^b/) size = $(c++)$(c++)
     else size = $(c++)
     date = $(c++) " " $(c++); fname=$(c++); target=$(c+1)
-    is_dir = (substr(perms,1,1) == "d")
-    is_link = (substr(perms,1,1) == "l")
+    file_type = substr(perms,1,1)
+    is_dir = (file_type == "d")
+    is_link = (file_type == "l")
+    is_socket (file_type == "s")
     is_exe = (index(perms, "x") > 0)
-    ext = ""
+    col_link = ""
+    if (is_link) {
+        last_char = (substr(target,length(target)))
+        if (last_char in COL_CLASSIFY) {
+            sub(/.$/,"",target)
+            col_link = COL_CLASSIFY[last_char]
+        }
+    } else if (substr(fname,length(fname)) in COL_CLASSIFY) {
+        sub(/.$/,"",fname)
+    }
+    ext=""
     if (match(fname, /\.([^.]+)$/, ex)) ext = tolower(ex[1])
-
     icon = ICON_FILE; col = COL_DEFAULT;
     if (is_link) { icon = ICON_SYMLINK; col = COL_LINK }
     else if (is_dir) { icon = ICON_FOLDER; col = COL_DIR }
@@ -194,7 +207,7 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
     if (vlen > maxw) maxw = vlen
     if (n==1 || vlen < minw) minw = vlen
     display_name = fname
-    if (is_link && target != "") display_name = display_name " -> " target
+    if (is_link && target != "") display_name = display_name " -> " colors["l"col_link] target
     dec_long = colors["l"col] icon " " display_name RESET
     dec_short = colors["l"col] icon " " fname RESET
 
