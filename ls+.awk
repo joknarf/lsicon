@@ -65,6 +65,8 @@ function print_long() {
         if (name_a[i] == "" || dec_long_a[i] == "") continue
         if (INUM_FLAG)
            printf("%s%*s ", colors[COL_INUM], max_inums, inums_a[i])
+        if (SIZEB_FLAG)
+           printf("%s%*s ", colors[COL_SIZE], max_size, sizeb_a[i])
         col = cols_a[i]
         lcol = "l" col
         perms = perms_a[i]
@@ -168,6 +170,7 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
 {
     c = 1
     if (INUM_FLAG) inum=$(c++)
+    if (SIZEB_FLAG) sizeb = $(c++);
     perms = $(c++); links = $(c++); owner = $(c++); group = $(c++);
     if (CONT_FLAG) context=$(c++) 
     # special handling for /dev with xx, yy instead of size
@@ -201,10 +204,11 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
     if (length(owner) > max_owner) max_owner = length(owner)
     if (length(group) > max_group) max_group = length(group)
     if (length(size) > max_size) max_size = length(size)
+    if (length(sizeb) > max_size) max_size = length(sizeb)
     if (length(context) > max_context) max_context = length(context)
     inums_a[n]=inum; perms_a[n]=perms; links_a[n]=links; owner_a[n]=owner; group_a[n]=group; size_a[n]=size;
     date_a[n]=date; name_a[n]=fname; dec_short_a[n]=dec_short; dec_long_a[n]=dec_long; vlen_a[n]=vlen
-    context_a[n]=context
+    context_a[n]=context; sizeb_a[n]=sizeb
     cols_a[n]=col
 }
 
