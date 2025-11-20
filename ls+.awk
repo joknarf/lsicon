@@ -65,8 +65,8 @@ function print_long() {
         if (name_a[i] == "" || dec_long_a[i] == "") continue
         if (INUM_FLAG)
            printf("%s%*s ", colors[COL_INUM], max_inums, inums_a[i])
-        lcol = cols_a[i]
-        col = substr(lcol,2)
+        col = cols_a[i]
+        lcol = "l" col
         perms = perms_a[i]
         perms_type = substr(perms,1,1)
         perms_owner = substr(perms,2,3)
@@ -75,14 +75,14 @@ function print_long() {
         perms_acl = substr(perms,11,1)
         if (perms_acl == "") perms_acl = " "
         if (USER==owner_a[i]) {
-            col_perms_owner = colors["l" col]
+            col_perms_owner = colors[lcol]
             col_owner = colors["l" COL_USER]
         } else {
             col_perms_owner = colors[col]
             col_owner = colors[COL_USER]
         }
         if (group_a[i] in user_groups) {
-            col_perms_group = colors["l" col]
+            col_perms_group = colors[lcol]
             col_group = colors["l" COL_USER]
         } else {
             col_perms_group = colors[col]
@@ -180,7 +180,7 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
     ext = ""
     if (match(fname, /\.([^.]+)$/, ex)) ext = tolower(ex[1])
 
-    icon = ICON_FILE; col = COL_DEFAULT
+    icon = ICON_FILE; col = COL_DEFAULT;
     if (is_link) { icon = ICON_SYMLINK; col = COL_LINK }
     else if (is_dir) { icon = ICON_FOLDER; col = COL_DIR }
     else if (is_exe) { icon = ICON_EXEC; col = COL_EXE }
@@ -192,8 +192,8 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
     if (n==1 || vlen < minw) minw = vlen
     display_name = fname
     if (is_link && target != "") display_name = display_name " -> " target
-    dec_long = colors[col] icon " " display_name RESET
-    dec_short = colors[col] icon " " fname RESET
+    dec_long = colors["l"col] icon " " display_name RESET
+    dec_short = colors["l"col] icon " " fname RESET
 
     ++n
     if (length(inum) > max_inums) max_inums = length(inum)
