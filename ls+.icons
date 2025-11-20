@@ -1,6 +1,7 @@
  	file
  	folder
  	exec
+ 	symlink
  	blockdev chardev socket pipe .app .bin .elf .hi .o
 󰻫 	.123dx .3dm .brep .catpart .catproduct .dwg .dxf .f3d .f3z .iam .ifc .ige .iges .igs .ipt .psm .skp .sldasm .sldprt .slvs .ste .step .stp .x_b .x_t
  	.db3 .s3db .sl3 .sqlite .sqlite3
@@ -137,7 +138,6 @@
  	.org
  	.kt .kts
  	.rst .rtf .txt
- 	.symlink
  	.fnl
  	.asm .s
  	.rkt .scm .sld .ss

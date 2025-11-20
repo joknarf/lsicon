@@ -174,7 +174,8 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
     gsub(/\\ /, "\\x20")  # protect escaped spaces (\ )
     gsub(/ +/, "\t")      # replace remaining (unescaped) spaces with tabs
     gsub(/\\x20/, " ")    # restore escaped spaces
-    gsub(/\\\\/,"\\")     # restore backslashes
+    if (/\\\\/) gsub(/\\\\/,"\\") # Keep real backslashes (escape backslash will be kept too)
+    else gsub(/\\/,"")    # remove escape backslashes (litteral display)
 }
 {
     c = 1
