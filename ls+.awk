@@ -188,7 +188,7 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
     else size = $(c++)
     date = $(c++) " " $(c++); fname=$(c++); target=$(c+1)
     file_type = substr(perms,1,1)
-    col_link = ""
+    col_link = COL_TYPE["-"]
     if (file_type=="l") {
         last_char = (substr(target,length(target)))
         if (last_char in COL_CLASSIFY) {
@@ -202,11 +202,14 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
     
     col = COL_TYPE[file_type]
     icon = ICON_TYPE[file_type]
-    if (file_type=="-" && (index(perms, "x") > 0)) {
+    if (file_type=="-") {
+        if (index(perms, "x") > 0) {
         col=COL_TYPE["x"]
         icon=ICON_TYPE["x"]
-    } else if (ext in EXT_COLOR) col=EXT_COLOR[ext]
-    if (ext in EXT_ICON && file_type!="l") icon = EXT_ICON[ext]
+        } else if (ext in EXT_COLOR) col=EXT_COLOR[ext]
+        if (ext in EXT_ICON) icon = EXT_ICON[ext]
+    }
+    
 
     vlen = length(fname) + 2
     if (vlen > maxw) maxw = vlen

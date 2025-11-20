@@ -184,7 +184,7 @@
  	.rpm
  	.jwmrc
 󰛓 	.tbc .tcl
- 	.applescript .apple .bundle .dylib .localized .plist
+ 	.applescript .apple .bundle .dylib .localized .plist .ipa
 󰂫 	.blend
  	.dockerfile .dockerignore
  	.cab .cmd .msi .windows
