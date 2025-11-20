@@ -21,6 +21,7 @@ for a in "$@"; do
         -n|--numeric-uid-gid)
             USER_GROUPS=$(id -G)
             USER_ID=$(id -u)
+            ARGS+=("$a")
         ;;
         -[!-]*) 
             [[ "$a" == *l* ]] && LONG=1
