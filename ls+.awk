@@ -185,7 +185,7 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
 /^total / { total_line = $0; next }
 { # preprocess line to have tab field separator
     sub(/^ */, "")        # remove leading spaces
-    gsub(/\x1b\[m/, "")   # remove blank ANSI code
+    gsub(/\x1b\[[mK]/, "")   # remove blank ANSI code
     gsub(/\\ /, "\\x20")  # protect escaped spaces (\ )
     gsub(/ +/, "\t")      # replace remaining (unescaped) spaces with tabs
     gsub(/\\x20/, " ")    # restore escaped spaces
