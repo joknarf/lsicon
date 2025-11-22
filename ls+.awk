@@ -90,11 +90,10 @@ function print_long() {
             col_perms_group = colors[col]
             col_group = colors[COL_USER]
         }
-        #col_owner = (USER==owner_a[i] ? colors["l" col] : colors[col])
-        #col_group = (group_a[i] in user_groups ? colors["l" col] : colors[col])
         perms = colors[lcol] perms_type col_perms_owner perms_owner col_perms_group perms_group colors[lcol] perms_other perms_acl
-        printf("%s %s%-*s %s%-*s",
-            perms, col_owner, max_owner, owner_a[i], col_group, max_group, group_a[i])
+        printf("%s ", perms) 
+        if (!("g" in flags)) printf("%s%-*s ", col_owner, max_owner, owner_a[i])
+        if (!("G" in flags)) printf("%s%-*s ", col_group, max_group, group_a[i])
         if ("Z" in flags)
             printf(" %s%*s", colors[COL_CONTEXT], max_context,context_a[i])
         printf(" %s%*s %s %s\n", colors[COL_SIZE], max_size, size_a[i], colors[COL_DATE] date_a[i], dec_long_a[i])
@@ -176,7 +175,7 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
     gsub(/\\ /, "\\x20")  # protect escaped spaces (\ )
     gsub(/ +/, "\t")      # replace remaining (unescaped) spaces with tabs
     gsub(/\\x20/, " ")    # restore escaped spaces
-    if (/\\\\/) gsub(/\\\\/,"\\") # Keep real backslashes (escape backslash will be kept too)
+    if (/\\\\/) {$0 = gensub(/\\([^\\])/, "\\1", "g"); gsub(/\\\\/,"\\")} # Keep real backslashes
     else gsub(/\\/,"")    # remove escape backslashes (litteral display)
 }
 {

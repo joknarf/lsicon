@@ -14,10 +14,16 @@ ARGS=("-lFb" "--color=never" "--time-style=+%y-%m-%d %H:%M")
 FLAGS=()
 while [ "$1" ];do
     case "$1" in
+        --help|--version) exec ls "$1";;
         --) break ;;
         --color*always|--color) COLOR=true; shift;continue ;;
         --color*never) COLOR=false; shift;continue ;;
-        --color=*) shift;continue;;
+        --color=*|-T|-w|--zero) shift;continue;;
+        --indicator-style|-m|-N|-p) shift;continue;;
+        --time-style) shift;continue;;
+        -g) FLAGS+=(g);shift;continue;;
+        -G|--no-group) FLAGS+=(G);shift;continue;;
+        -o) FLAGS+=(l G);shift;continue;;
         -l|--format=long) FLAGS+=(l) ;;
         -Z|--context) FLAGS+=(Z) ;;
         -i|--inode) FLAGS+=(i) ;;
@@ -30,6 +36,7 @@ while [ "$1" ];do
         -[!-]*)
             [[ "$1" == *n* ]] && USER_GROUPS=$(id -G) && USER_ID=$(id -u)
             a="${1#-}";while [ "$a" ];do FLAGS+=("${a:0:1}");a="${a:1}";done
+            [[ "$1" == *[gG]* ]] && shift && continue
         ;;
     esac
     ARGS+=("$1")
