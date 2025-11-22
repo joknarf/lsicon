@@ -208,7 +208,7 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
             if (last_char in C_CLASS) {
                 target = substr(target, 1, length(target)-1)
                 c_link = "l" C_CLASS[last_char]
-            }
+            } else c_link = "l" C_TYPE["-"]
         }
     } else if (substr(fname,length(fname)) in C_CLASS)
         fname = substr(fname, 1, length(fname)-1)
