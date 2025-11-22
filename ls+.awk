@@ -7,7 +7,7 @@ function print_multic() {
     Cmax = 1 + int((width - maxw) / (minw + pad))
     if (Cmax < 1) Cmax = 1
     if (Cmax > n) Cmax = n
-    if ("1" in flags) { Cmax=1 }
+    if (flag_1) { Cmax=1 }
     colw[1] = 0
     # Try possible column counts from Cmax down to 1
     for (C = Cmax; C >= 1; C--) {
@@ -17,7 +17,7 @@ function print_multic() {
           break
         }
         # Compute per-column width
-        for (c = 1; c <= C; c++) colw[c] = 0
+        delete colw
 
         for (i = 1; i <= n; i++) {
             c = int((i-1) / R) + 1
@@ -28,6 +28,7 @@ function print_multic() {
         total = 0
         for (c = 1; c <= C; c++) {
             total += colw[c]
+            if (total > width) break
             if (c < C) total += pad
         }
 
@@ -56,16 +57,15 @@ function print_multic() {
         }
         printf("\n")
     }
-    fflush()
 }
 function print_long() {
     if (total_line) print total_line
     total_line = ""
     for (i=1;i<=n;i++) {
         if (name_a[i] == "" || dec_long_a[i] == "") continue
-        if ("i" in flags)
+        if (flag_i)
            printf("%s%*s ", colors[C_INUM], max_inums, inums_a[i])
-        if ("s" in flags)
+        if (flag_s)
            printf("%s%*s ", colors[C_SIZE], max_size, sizeb_a[i])
         col = cols_a[i]
         lcol = "l" col
@@ -92,9 +92,9 @@ function print_long() {
         }
         perms = colors[lcol] perms_type RESET c_perms_owner perms_owner c_perms_group perms_group colors[lcol] perms_other perms_acl
         printf("%s ", perms) 
-        if (!("g" in flags)) printf("%s%-*s ", c_owner, max_owner, owner_a[i])
-        if (!("G" in flags)) printf("%s%-*s ", c_group, max_group, group_a[i])
-        if ("Z" in flags)
+        if (!(flag_g)) printf("%s%-*s ", c_owner, max_owner, owner_a[i])
+        if (!(flag_G)) printf("%s%-*s ", c_group, max_group, group_a[i])
+        if (flag_Z)
             printf(" %s%*s", colors[C_CONTEXT], max_context,context_a[i])
         printf(" %s%*s %s %s\n", colors[C_SIZE], max_size, size_a[i], colors[C_DATE] date_a[i], dec_long_a[i])
     }
@@ -106,7 +106,7 @@ function fglcol(num) {
     return ESC num+60 "m"
 }
 function print_ls() {
-    if ("l" in flags) print_long()
+    if (flag_l) print_long()
     else print_multic()
     n=0; max_links=0; max_owner=0; max_group=0; max_size=0; max_inums=0; maxw=0;
 }
@@ -116,6 +116,13 @@ BEGIN {
     for(i in user_groups) user_groups[user_groups[i]]=1
     split(FLAGS, f)
     for(i in f) flags[f[i]]=1
+    flag_i = ("i" in flags)
+    flag_s = ("s" in flags)
+    flag_Z = ("Z" in flags)
+    flag_l = ("l" in flags)
+    flag_g = ("g" in flags)
+    flag_G = ("G" in flags)
+    flag_1 = ("1" in flags)
     while ((getline < iconfile) > 0)
         for(i=2;i<=NF;i++) I_EXT[$i]=$1
     close(iconfile)
@@ -187,10 +194,10 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
 }
 {
     c = 1
-    if ("i" in flags) inum=$(c++)
-    if ("s" in flags) sizeb = $(c++);
+    if (flag_i) inum=$(c++)
+    if (flag_s) sizeb = $(c++);
     perms = $(c++); links = $(c++); owner = $(c++); group = $(c++);
-    if ("Z" in flags) context=$(c++) 
+    if (flag_Z) context=$(c++) 
     # special handling for /dev with xx, yy instead of size
     if (perms ~ /^c/ || perms ~ /^b/) size = $(c++)" "$(c++)
     else size = $(c++)
@@ -232,7 +239,7 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
     display_name = fname
     if (target != "") display_name = display_name " -> " colors[c_link] target
     dec_long = colors[lcol] icon " " display_name RESET
-    if (missing && !("l" in flags)) lcol=C_CLASS["?"] "_bg"
+    if (missing && !flag_l) lcol=C_CLASS["?"] "_bg"
     dec_short = colors[lcol] icon " " fname RESET
 
     if (length(inum) > max_inums) max_inums = length(inum)
@@ -250,6 +257,6 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
 }
 
 END {
-    if ("l" in flags) print_long()
+    if (flag_l) print_long()
     else print_multic()
 }
