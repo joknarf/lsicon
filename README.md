@@ -5,7 +5,7 @@
 
 # lsicon
 
-Simple and fast ls command enhancer in less than 16K (only uses bash/ls/awk)
+Simplest and fastes ls command enhancer in less than 16K (only uses bash/ls/awk)
 
 ![image](https://github.com/user-attachments/assets/d76ec9f8-b745-46ef-8ce1-2c667ba7c578)
 
