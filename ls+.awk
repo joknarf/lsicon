@@ -90,7 +90,7 @@ function print_long() {
             c_perms_group = colors[col]
             c_group = colors[C_USER]
         }
-        perms = colors[lcol] perms_type c_perms_owner perms_owner c_perms_group perms_group colors[lcol] perms_other perms_acl
+        perms = colors[lcol] perms_type RESET c_perms_owner perms_owner c_perms_group perms_group colors[lcol] perms_other perms_acl
         printf("%s ", perms) 
         if (!("g" in flags)) printf("%s%-*s ", c_owner, max_owner, owner_a[i])
         if (!("G" in flags)) printf("%s%-*s ", c_group, max_group, group_a[i])
@@ -130,8 +130,12 @@ BEGIN {
     }
     # load theme colors
     while ((getline < themefile) > 0)
-        if (NF==2)
+        if (NF==2) {
             colors[$1]=ESC "38;2;" $2 "m"
+            colors[$1"_bg"]=ESC "48;2;" $2 "m" ESC"38;2;235;235;235m" ESC"5m"
+            #if (/^l/) colors[$1"_bg"]=colors[$1"_bg"] ESC "38;2;0;0;0m"
+
+        }
     RESET=ESC "0m"
     C_DATE=C_EXT["date"]
     C_USER=C_EXT["user"]
@@ -174,6 +178,7 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
 /^total / { total_line = $0; next }
 { # preprocess line to have tab field separator
     sub(/^ */, "")        # remove leading spaces
+    gsub(/\x1b\[m/, "")   # remove blank ANSI code
     gsub(/\\ /, "\\x20")  # protect escaped spaces (\ )
     gsub(/ +/, "\t")      # replace remaining (unescaped) spaces with tabs
     gsub(/\\x20/, " ")    # restore escaped spaces
@@ -187,19 +192,26 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
     perms = $(c++); links = $(c++); owner = $(c++); group = $(c++);
     if ("Z" in flags) context=$(c++) 
     # special handling for /dev with xx, yy instead of size
-    if (perms ~ /^c/ || perms ~ /^b/) size = $(c++)$(c++)
+    if (perms ~ /^c/ || perms ~ /^b/) size = $(c++)" "$(c++)
     else size = $(c++)
     date = $(c++) " " $(c++); fname=$(c++); target=$(c+1)
     file_type = substr(perms,1,1)
     c_link = C_TYPE["-"]
-    if (file_type=="l") {
-        last_char = (substr(target,length(target)))
-        if (last_char in C_CLASS) {
-            sub(/.$/,"",target)
-            c_link = C_CLASS[last_char]
+    missing = 0
+    if (target) {
+        if (target ~ /^\x1b\[1m/) { # missing
+            missing = 1
+            c_link = C_CLASS["?"] "_bg"
+            target = substr(target, 5)
+        } else {
+            last_char = (substr(target,length(target)))
+            if (last_char in C_CLASS) {
+                target = substr(target, 1, length(target)-1)
+                c_link = "l" C_CLASS[last_char]
+            }
         }
     } else if (substr(fname,length(fname)) in C_CLASS)
-        sub(/.$/,"",fname)
+        fname = substr(fname, 1, length(fname)-1)
     ext=""
     if (match(fname, /\.[^.]+$/, ex)) ext = tolower(ex[0])
     
@@ -212,17 +224,17 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
         } else if (ext in C_EXT) col=C_EXT[ext]
         if (ext in I_EXT) icon = I_EXT[ext]
     }
-    
 
     vlen = length(fname) + 2
+    lcol="l"col
     if (vlen > maxw) maxw = vlen
     if (n==1 || vlen < minw) minw = vlen
     display_name = fname
-    if (target != "") display_name = display_name " -> " colors["l"c_link] target
-    dec_long = colors["l"col] icon " " display_name RESET
-    dec_short = colors["l"col] icon " " fname RESET
+    if (target != "") display_name = display_name " -> " colors[c_link] target
+    dec_long = colors[lcol] icon " " display_name RESET
+    if (missing && !("l" in flags)) lcol=C_CLASS["?"] "_bg"
+    dec_short = colors[lcol] icon " " fname RESET
 
-    ++n
     if (length(inum) > max_inums) max_inums = length(inum)
     if (length(links) > max_links) max_links = length(links)
     if (length(owner) > max_owner) max_owner = length(owner)
@@ -230,6 +242,7 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
     if (length(size) > max_size) max_size = length(size)
     if (length(sizeb) > max_size) max_size = length(sizeb)
     if (length(context) > max_context) max_context = length(context)
+    ++n
     inums_a[n]=inum; perms_a[n]=perms; links_a[n]=links; owner_a[n]=owner; group_a[n]=group; size_a[n]=size;
     date_a[n]=date; name_a[n]=fname; dec_short_a[n]=dec_short; dec_long_a[n]=dec_long; vlen_a[n]=vlen
     context_a[n]=context; sizeb_a[n]=sizeb
