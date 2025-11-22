@@ -25,7 +25,7 @@ Much faster than other "modern" tools (here /usr containing ~150000 files):
 * display colors/icons according to file types/extensions/permissions
 * display symlink target according to target file types/permissions
 * display broken symlink
-* highlight current user/groups and permssions
+* highlight current user/groups and permissions
 * easy customization for colors/icons/extensions
 
 ## Prerequisites
