@@ -36,7 +36,7 @@ while [ "$1" ];do
         -[!-]*)
             [[ "$1" == *n* ]] && USER_GROUPS=$(id -G) && USER_ID=$(id -u)
             a="${1#-}";while [ "$a" ];do FLAGS+=("${a:0:1}");a="${a:1}";done
-            [[ "$1" == *[gG]* ]] && shift && continue
+            [[ "$1" == *[gG]* ]] && ARGS+=("${1//[gG]/}") && shift && continue
         ;;
     esac
     ARGS+=("$1")
