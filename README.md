@@ -7,8 +7,7 @@
 
 Simple and fast ls command enhancer in less than 16K (only uses bash/ls/awk)
 
-![image](https://github.com/user-attachments/assets/e06bdc26-8926-421e-8c98-cd47816974bc)
-
+![image](https://github.com/user-attachments/assets/d76ec9f8-b745-46ef-8ce1-2c667ba7c578)
 
 Much faster than other "modern" tools (here /usr containing ~150000 files):
 
