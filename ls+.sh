@@ -46,16 +46,16 @@ done
 ARGS+=("$@")
 [ ! "$COLOR" ] && [ ! -t 1 ] && COLOR=false || COLOR=true
 ! $COLOR && exec $ls "${ARGSLS[@]}"
-
 [ -r ~/.config/ls+/icons ] && ICON_FILE=~/.config/ls+/icons
 [ -r ~/.config/ls+/colors ] && COLOR_FILE=~/.config/ls+/colors
 [ -r ~/.config/ls+/theme ] && THEME_FILE=~/.config/ls+/theme
-: ${ICON_FILE:=${0%/*}/ls+.icons}
-: ${COLOR_FILE:=${0%/*}/ls+.colors}
-: ${THEME_FILE:=${0%/*}/ls+.theme}
+LSI=$(readlink -f $0)
+: ${ICON_FILE:=${LSI%/*}/ls+.icons}
+: ${COLOR_FILE:=${LSI%/*}/ls+.colors}
+: ${THEME_FILE:=${LSI%/*}/ls+.theme}
 TERM_COLS=$(tput cols) 2>/dev/null
 : ${TERM_COLS:=80}
 
 set -o pipefail
 $ls -1 "${ARGS[@]}" 2>&1 | awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
-    -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -f ${0%/*}/ls+.awk
+    -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -f ${LSI%/*}/ls+.awk

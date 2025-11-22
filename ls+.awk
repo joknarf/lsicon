@@ -64,9 +64,9 @@ function print_long() {
     for (i=1;i<=n;i++) {
         if (name_a[i] == "" || dec_long_a[i] == "") continue
         if ("i" in flags)
-           printf("%s%*s ", colors[COL_INUM], max_inums, inums_a[i])
+           printf("%s%*s ", colors[C_INUM], max_inums, inums_a[i])
         if ("s" in flags)
-           printf("%s%*s ", colors[COL_SIZE], max_size, sizeb_a[i])
+           printf("%s%*s ", colors[C_SIZE], max_size, sizeb_a[i])
         col = cols_a[i]
         lcol = "l" col
         perms = perms_a[i]
@@ -77,26 +77,26 @@ function print_long() {
         perms_acl = substr(perms,11,1)
         if (perms_acl == "") perms_acl = " "
         if (USER==owner_a[i]) {
-            col_perms_owner = colors[lcol]
-            col_owner = colors["l" COL_USER]
+            c_perms_owner = colors[lcol]
+            c_owner = colors["l" C_USER]
         } else {
-            col_perms_owner = colors[col]
-            col_owner = colors[COL_USER]
+            c_perms_owner = colors[col]
+            c_owner = colors[C_USER]
         }
         if (group_a[i] in user_groups) {
-            col_perms_group = colors[lcol]
-            col_group = colors["l" COL_USER]
+            c_perms_group = colors[lcol]
+            c_group = colors["l" C_USER]
         } else {
-            col_perms_group = colors[col]
-            col_group = colors[COL_USER]
+            c_perms_group = colors[col]
+            c_group = colors[C_USER]
         }
-        perms = colors[lcol] perms_type col_perms_owner perms_owner col_perms_group perms_group colors[lcol] perms_other perms_acl
+        perms = colors[lcol] perms_type c_perms_owner perms_owner c_perms_group perms_group colors[lcol] perms_other perms_acl
         printf("%s ", perms) 
-        if (!("g" in flags)) printf("%s%-*s ", col_owner, max_owner, owner_a[i])
-        if (!("G" in flags)) printf("%s%-*s ", col_group, max_group, group_a[i])
+        if (!("g" in flags)) printf("%s%-*s ", c_owner, max_owner, owner_a[i])
+        if (!("G" in flags)) printf("%s%-*s ", c_group, max_group, group_a[i])
         if ("Z" in flags)
-            printf(" %s%*s", colors[COL_CONTEXT], max_context,context_a[i])
-        printf(" %s%*s %s %s\n", colors[COL_SIZE], max_size, size_a[i], colors[COL_DATE] date_a[i], dec_long_a[i])
+            printf(" %s%*s", colors[C_CONTEXT], max_context,context_a[i])
+        printf(" %s%*s %s %s\n", colors[C_SIZE], max_size, size_a[i], colors[C_DATE] date_a[i], dec_long_a[i])
     }
 }
 function fgcol(num) {
@@ -117,10 +117,10 @@ BEGIN {
     split(FLAGS, f)
     for(i in f) flags[f[i]]=1
     while ((getline < iconfile) > 0)
-        for(i=2;i<=NF;i++) EXT_ICON[$i]=$1
+        for(i=2;i<=NF;i++) I_EXT[$i]=$1
     close(iconfile)
     while ((getline < colorfile) > 0)
-        for(i=2;i<=NF;i++) EXT_COLOR[$i]=$1
+        for(i=2;i<=NF;i++) C_EXT[$i]=$1
     close(colorfile)
     # initialize basic colors
     split("black,red,green,yellow,blue,magenta,cyan,white", colors, ",")
@@ -133,32 +133,33 @@ BEGIN {
         if (NF==2)
             colors[$1]=ESC "38;2;" $2 "m"
     RESET=ESC "0m"
-    COL_DATE=EXT_COLOR["date"]
-    COL_USER=EXT_COLOR["user"]
-    COL_SIZE=EXT_COLOR["size"]
-    COL_CONTEXT=EXT_COLOR["context"]
-    COL_INUM=EXT_COLOR["inum"]
-    COL_TYPE["-"] = EXT_COLOR["file"]
-    COL_TYPE["d"] = EXT_COLOR["folder"]
-    COL_TYPE["p"] = EXT_COLOR["pipe"]
-    COL_TYPE["s"] = EXT_COLOR["socket"]
-    COL_TYPE["l"] = EXT_COLOR["symlink"]
-    COL_TYPE["x"] = EXT_COLOR["exec"]
-    COL_TYPE["b"] = EXT_COLOR["blockdev"]
-    COL_TYPE["c"] = EXT_COLOR["chardev"]
-    ICON_TYPE["-"] = EXT_ICON["file"]
-    ICON_TYPE["d"] = EXT_ICON["folder"]
-    ICON_TYPE["l"] = EXT_ICON["symlink"]
-    ICON_TYPE["p"] = EXT_ICON["pipe"]
-    ICON_TYPE["s"] = EXT_ICON["socket"]
-    ICON_TYPE["x"] = EXT_ICON["exec"]
-    ICON_TYPE["b"] = EXT_ICON["blockdev"]
-    ICON_TYPE["c"] = EXT_ICON["chardev"]
-    COL_CLASSIFY["|"] = EXT_COLOR["pipe"]
-    COL_CLASSIFY["="] = EXT_COLOR["socket"]
-    COL_CLASSIFY["*"] = EXT_COLOR["exec"]
-    COL_CLASSIFY["/"] = EXT_COLOR["folder"]
-    COL_CLASSIFY["?"] = EXT_COLOR["missing"] # not implemented in ls
+    C_DATE=C_EXT["date"]
+    C_USER=C_EXT["user"]
+    C_SIZE=C_EXT["size"]
+    C_CONTEXT=C_EXT["context"]
+    C_INUM=C_EXT["inum"]
+    C_TYPE["-"] = C_EXT["file"]
+    C_TYPE["d"] = C_EXT["folder"]
+    C_TYPE["p"] = C_EXT["pipe"]
+    C_TYPE["s"] = C_EXT["socket"]
+    C_TYPE["l"] = C_EXT["symlink"]
+    C_TYPE["x"] = C_EXT["exec"]
+    C_TYPE["b"] = C_EXT["blockdev"]
+    C_TYPE["c"] = C_EXT["chardev"]
+    I_TYPE["-"] = I_EXT["file"]
+    I_TYPE["d"] = I_EXT["folder"]
+    I_TYPE["l"] = I_EXT["symlink"]
+    I_TYPE["p"] = I_EXT["pipe"]
+    I_TYPE["s"] = I_EXT["socket"]
+    I_TYPE["x"] = I_EXT["exec"]
+    I_TYPE["b"] = I_EXT["blockdev"]
+    I_TYPE["c"] = I_EXT["chardev"]
+    C_CLASS["|"] = C_EXT["pipe"]
+    C_CLASS["="] = C_EXT["socket"]
+    C_CLASS["*"] = C_EXT["exec"]
+    C_CLASS["/"] = C_EXT["folder"]
+    C_CLASS[">"] = C_EXT["door"]
+    C_CLASS["?"] = C_EXT["missing"] # not implemented in ls
     FS="\t"
     prevempty=0
     nr=1
@@ -190,26 +191,26 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
     else size = $(c++)
     date = $(c++) " " $(c++); fname=$(c++); target=$(c+1)
     file_type = substr(perms,1,1)
-    col_link = COL_TYPE["-"]
+    c_link = C_TYPE["-"]
     if (file_type=="l") {
         last_char = (substr(target,length(target)))
-        if (last_char in COL_CLASSIFY) {
+        if (last_char in C_CLASS) {
             sub(/.$/,"",target)
-            col_link = COL_CLASSIFY[last_char]
+            c_link = C_CLASS[last_char]
         }
-    } else if (substr(fname,length(fname)) in COL_CLASSIFY)
+    } else if (substr(fname,length(fname)) in C_CLASS)
         sub(/.$/,"",fname)
     ext=""
     if (match(fname, /\.[^.]+$/, ex)) ext = tolower(ex[0])
     
-    col = COL_TYPE[file_type]
-    icon = ICON_TYPE[file_type]
+    col = C_TYPE[file_type]
+    icon = I_TYPE[file_type]
     if (file_type=="-") {
         if (index(perms, "x") > 0) {
-        col=COL_TYPE["x"]
-        icon=ICON_TYPE["x"]
-        } else if (ext in EXT_COLOR) col=EXT_COLOR[ext]
-        if (ext in EXT_ICON) icon = EXT_ICON[ext]
+        col=C_TYPE["x"]
+        icon=I_TYPE["x"]
+        } else if (ext in C_EXT) col=C_EXT[ext]
+        if (ext in I_EXT) icon = I_EXT[ext]
     }
     
 
@@ -217,7 +218,7 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
     if (vlen > maxw) maxw = vlen
     if (n==1 || vlen < minw) minw = vlen
     display_name = fname
-    if (target != "") display_name = display_name " -> " colors["l"col_link] target
+    if (target != "") display_name = display_name " -> " colors["l"c_link] target
     dec_long = colors["l"col] icon " " display_name RESET
     dec_short = colors["l"col] icon " " fname RESET
 
