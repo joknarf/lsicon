@@ -10,6 +10,7 @@ CONTEXT= INUM= LONG= ONE= SIZEB=
 USER_GROUPS=$(id -Gn)
 USER_ID=$(id -un)
 COLOR=''
+ARGSLS=("$@")
 ARGS=("-lFb" "--color=never" "--time-style=+%y-%m-%d %H:%M")
 FLAGS=()
 while [ "$1" ];do
@@ -44,7 +45,7 @@ while [ "$1" ];do
 done
 ARGS+=("$@")
 [ ! "$COLOR" ] && [ ! -t 1 ] && COLOR=false || COLOR=true
-! $COLOR && exec $ls "$@"
+! $COLOR && exec $ls "${ARGSLS[@]}"
 
 [ -r ~/.config/ls+/icons ] && ICON_FILE=~/.config/ls+/icons
 [ -r ~/.config/ls+/colors ] && COLOR_FILE=~/.config/ls+/colors

@@ -157,7 +157,8 @@ BEGIN {
     COL_CLASSIFY["|"] = EXT_COLOR["pipe"]
     COL_CLASSIFY["="] = EXT_COLOR["socket"]
     COL_CLASSIFY["*"] = EXT_COLOR["exec"]
-    COL_CLASSIFY["/"] = EXT_COLOR["folder"s]
+    COL_CLASSIFY["/"] = EXT_COLOR["folder"]
+    COL_CLASSIFY["?"] = EXT_COLOR["missing"] # not implemented in ls
     FS="\t"
     prevempty=0
     nr=1
