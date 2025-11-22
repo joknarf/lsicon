@@ -5,11 +5,12 @@
 
 # lsicon
 
-Simple ls command enhancer in less than 12K (only uses bash/ls/awk)
+Simple and fast ls command enhancer in less than 16K (only uses bash/ls/awk)
 
-![image](https://github.com/user-attachments/assets/85f3031a-c7e7-4add-a6eb-30b14efb26cc)
+![image](https://github.com/user-attachments/assets/ee57c44a-9d10-460c-8481-56745f358fce)
 
-Much faster than other tools (here /usr containing ~150000 files):
+
+Much faster than other "modern" tools (here /usr containing ~150000 files):
 
 | Tool       | Command                | Time (wsl ubuntu)  | Time (centos9)   |
 |------------|------------------------|--------------------|------------------|
@@ -19,6 +20,14 @@ Much faster than other tools (here /usr containing ~150000 files):
 | lsd        | `lsd -lR /usr        ` | `27.941s  13.698s` | `8.564s  2.627s` |
 | eza        | `eza --icons -lR /usr` | `31.340s  28.509s` | `8.795s  4.751s` |
 
+## features
+
+* all GNU ls features
+* display colors/icons according to file types/extensions/permissions
+* display symlink target according to target file types/permissions
+* display broken symlink
+* highlight current user/groups and permssions
+* easy customization for colors/icons/extensions
 
 ## Prerequisites
 
