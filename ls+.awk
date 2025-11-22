@@ -7,7 +7,7 @@ function print_multic() {
     Cmax = 1 + int((width - maxw) / (minw + pad))
     if (Cmax < 1) Cmax = 1
     if (Cmax > n) Cmax = n
-    if (ONE_FLAG) { Cmax=1 }
+    if ("1" in flags) { Cmax=1 }
     colw[1] = 0
     # Try possible column counts from Cmax down to 1
     for (C = Cmax; C >= 1; C--) {
@@ -63,9 +63,9 @@ function print_long() {
     total_line = ""
     for (i=1;i<=n;i++) {
         if (name_a[i] == "" || dec_long_a[i] == "") continue
-        if (INUM_FLAG)
+        if ("i" in flags)
            printf("%s%*s ", colors[COL_INUM], max_inums, inums_a[i])
-        if (SIZEB_FLAG)
+        if ("s" in flags)
            printf("%s%*s ", colors[COL_SIZE], max_size, sizeb_a[i])
         col = cols_a[i]
         lcol = "l" col
@@ -95,7 +95,7 @@ function print_long() {
         perms = colors[lcol] perms_type col_perms_owner perms_owner col_perms_group perms_group colors[lcol] perms_other perms_acl
         printf("%s %s%-*s %s%-*s",
             perms, col_owner, max_owner, owner_a[i], col_group, max_group, group_a[i])
-        if (CONT_FLAG)
+        if ("Z" in flags)
             printf(" %s%*s", colors[COL_CONTEXT], max_context,context_a[i])
         printf(" %s%*s %s %s\n", colors[COL_SIZE], max_size, size_a[i], colors[COL_DATE] date_a[i], dec_long_a[i])
     }
@@ -107,7 +107,7 @@ function fglcol(num) {
     return ESC num+60 "m"
 }
 function print_ls() {
-    if (LONG_FLAG) print_long()
+    if ("l" in flags) print_long()
     else print_multic()
     n=0; max_links=0; max_owner=0; max_group=0; max_size=0; max_inums=0; maxw=0;
 }
@@ -115,6 +115,8 @@ BEGIN {
     ESC="\033["
     split(GROUPS, user_groups)
     for(i in user_groups) user_groups[user_groups[i]]=1
+    split(FLAGS, f)
+    for(i in f) flags[f[i]]=1
     while ((getline < iconfile) > 0)
         for(i=2;i<=NF;i++) EXT_ICON[$i]=$1
     close(iconfile)
@@ -179,10 +181,10 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
 }
 {
     c = 1
-    if (INUM_FLAG) inum=$(c++)
-    if (SIZEB_FLAG) sizeb = $(c++);
+    if ("i" in flags) inum=$(c++)
+    if ("s" in flags) sizeb = $(c++);
     perms = $(c++); links = $(c++); owner = $(c++); group = $(c++);
-    if (CONT_FLAG) context=$(c++) 
+    if ("Z" in flags) context=$(c++) 
     # special handling for /dev with xx, yy instead of size
     if (perms ~ /^c/ || perms ~ /^b/) size = $(c++)$(c++)
     else size = $(c++)
@@ -234,6 +236,6 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
 }
 
 END {
-    if (LONG_FLAG) print_long()
+    if ("l" in flags) print_long()
     else print_multic()
 }
