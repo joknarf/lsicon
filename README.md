@@ -72,12 +72,12 @@ ls+ --color |less -RESX
 You can customize all icons association :
 - editing `ls+.icons`
 - creating a `~/.config/ls+/icons` file
-- format of file : `<icon> <ext> [<ext>...]`
+- format of file : `<icon> .<ext> [.<ext>...]`
 
 You can customize all colors association :
 - editing `ls+.colors`
 - creating a `~/.config/ls+/colors` file
-- format of file : `<colorname> <ext> [<ext>...]`
+- format of file : `<colorname> .<ext> [.<ext>...]`
 
 You can customize all theme colors :
 - editing `ls+.theme`
