@@ -11,7 +11,7 @@ USER_GROUPS=$(id -Gn)
 USER_ID=$(id -un)
 COLOR=''
 ARGSLS=("$@")
-ARGS=("-lFb" "--color" "--time-style=+%y-%m-%d %H:%M")
+ARGS=("-lFQ" "--color" "--time-style=+%y-%m-%d %H:%M")
 FLAGS=()
 while [ "$1" ];do
     case "$1" in
@@ -19,9 +19,9 @@ while [ "$1" ];do
         --) break ;;
         --color*always|--color) COLOR=true; shift;continue ;;
         --color*never) COLOR=false; shift;continue ;;
-        --color=*|-T|-w|--zero) shift;continue;;
+        --color=*|-T|-w|--zero|-b) shift;continue;;
         --indicator-style|-m|-N|-p) shift;continue;;
-        --time-style) shift;continue;;
+        --time-style|--quoting-style) shift;continue;;
         -g) FLAGS+=(g);shift;continue;;
         -G|--no-group) FLAGS+=(G);shift;continue;;
         -o) FLAGS+=(l G);shift;continue;;

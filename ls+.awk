@@ -171,25 +171,15 @@ BEGIN {
     C_CLASS["/"] = C_EXT["folder"]
     C_CLASS[">"] = C_EXT["door"]
     C_CLASS["?"] = C_EXT["missing"] # not implemented in ls
-    FS="\t"
-    prevempty=0
-    nr=1
 }
 # handle ls error messages
-/^(ls|gls):/ { print_ls();print colors["lred"] $0 RESET >"/dev/stderr"; nr=1; next }
-# gnu ls bug directory title line with not escaped spaces / best effort
-nr==1 && /:$/ && !/\\ / && !/(^| )[dlsbpc-]([r-][w-][xSsTt-]){3}[ .]? +[0-9]+ / { gsub(/\\/,""); nr=0; print $0; next }
-prevempty && /:$/ { gsub(/\\/,""); prevempty=0; print $0; next }
-{ prevempty=0; nr=0 }
-$0=="" { prevempty=1; print_ls(); print ""; next }
+/^(ls|gls):/ { print_ls();print colors["lred"] $0 RESET >"/dev/stderr"; next }
+/^"/{ gsub(/^"|\\|":$/,""); print $0":"; next }
+$0=="" { print_ls(); print ""; next }
 /^total / { total_line = $0; next }
 {   # preprocess line to have tab field separator
-    gsub(/^ +|\x1b\[[mK]/, "")   # trim leading spaces/remove blank ANSI code
-    gsub(/\\ /, "\\x20")  # protect escaped spaces (\ )
-    gsub(/ +/, "\t")      # replace remaining (unescaped) spaces with tabs
-    gsub(/\\x20/, " ")    # restore escaped spaces
-    if (/\\\\/) {$0 = gensub(/\\([^\\])/, "\\1", "g"); gsub(/\\\\/,"\\")} # Keep real backslashes
-    else gsub(/\\/,"")    # remove escape backslashes (litteral display)
+    if (/\x1b\[1m/) missing=1; else missing=0
+    gsub(/^ +|\x1b\[1?[mK]/, "")   # trim leading spaces/remove blank ANSI code
 }
 {
     c = 1
@@ -197,27 +187,36 @@ $0=="" { prevempty=1; print_ls(); print ""; next }
     if (flag_s) sizeb = $(c++);
     perms = $(c++); links = $(c++); owner = $(c++); group = $(c++);
     if (flag_Z) context=$(c++) 
-    # special handling for /dev with xx, yy instead of size
     if (perms ~ /^c/ || perms ~ /^b/) size = $(c++)" "$(c++)
     else size = $(c++)
     date = $(c++) " " $(c++); fname=$(c++); target=$(c+1)
     file_type = substr(perms,1,1)
     c_link = C_TYPE["-"]
-    missing = 0
+    file_i=substr($0, index($0, "\""))
+    indicator = (substr(file_i,length(file_i)))
+    if (indicator!="\"")
+        file_i=substr(file_i, 1, length(file_i)-1)
+    match(file_i, /^"(([^"\\]|\\.)*)"/, m1)
+    fname = m1[1]
+    match(file_i, /-> *"(([^"\\]|\\.)*)"$/, m2)
+    target = m2[1]        
+
+    if (fname ~ /\\\\/) {fname = gensub(/\\([^\\])/, "\\1", "g", fname); gsub(/\\\\/,"\\",fname)} 
+    else gsub(/\\/,"",fname)    # remove escape backslashes (litteral display)
     if (target) {
-        if (target ~ /^\x1b\[1m/) { # missing
-            missing = 1
+        if (target ~ /\\\\/) {target = gensub(/\\([^\\])/, "\\1", "g", fname); gsub(/\\\\/,"\\",target)}
+        else gsub(/\\/,"",target)    # remove escape backslashes (litteral display)
+    }
+
+    if (target) {
+        if (missing) { # missing
             c_link = C_CLASS["?"] "_bg"
-            target = substr(target, 5)
         } else {
-            last_char = (substr(target,length(target)))
-            if (last_char in C_CLASS) {
-                target = substr(target, 1, length(target)-1)
-                c_link = "l" C_CLASS[last_char]
+            if (indicator in C_CLASS) {
+                c_link = "l" C_CLASS[indicator]
             } else c_link = "l" C_TYPE["-"]
         }
-    } else if (substr(fname,length(fname)) in C_CLASS)
-        fname = substr(fname, 1, length(fname)-1)
+    }
     ext=""
     if (match(fname, /\.[^.]+$/, ex)) ext = tolower(ex[0])
     
