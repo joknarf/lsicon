@@ -6,7 +6,6 @@
 
 type gls >/dev/null 2>&1 && ls="gls" || ls="ls"
 type gawk >/dev/null 2>&1 && awk="gawk" || awk="awk"
-CONTEXT= INUM= LONG= ONE= SIZEB=
 USER_GROUPS=$(id -Gn)
 USER_ID=$(id -un)
 COLOR=''
