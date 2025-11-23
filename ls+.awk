@@ -81,7 +81,7 @@ function print_long() {
     printf("%s ", perms)
     if (!(flag_g)) printf("%s%-*s ", c_owner, max_owner, owner_a[i])
     if (!(flag_G)) printf("%s%-*s ", c_group, max_group, group_a[i])
-    if (flag_Z) printf(" %s%*s", colors[C_CONTEXT], max_context,context_a[i])
+    if (flag_Z) printf(" %s%-*s", colors[C_CONTEXT], max_context,context_a[i])
     printf(" %s%*s %s %s\n", colors[C_SIZE], max_size, size_a[i], colors[C_DATE] date_a[i], long_a[i])
   }
 }
