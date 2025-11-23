@@ -179,19 +179,23 @@ $0=="" { print_ls(); print ""; next }
   file_i=substr($0, index($0, "\""))
   indicator=(substr(file_i,length(file_i)))
   if (indicator!="\"") file_i=substr(file_i, 1, length(file_i)-1)
-  match(file_i, /^"(([^"\\]|\\.)*)"/, m1)
-  fname=m1[1]
-  match(file_i, /-> "(([^"\\]|\\.)*)"$/, m2)
-  target=m2[1]
-
+  if (type=="l") {
+    match(file_i, /^"(([^"\\]|\\.)*)"/, m1)
+    fname=m1[1]
+    file_i=substr(file_i,length(fname)+8)
+    if(flag_l) {
+      target=substr(file_i,1,length(file_i)-1)
+      if (target ~ /\\\\/) {target=gensub(/\\([^\\])/, "\\1", "g", fname); gsub(/\\\\/,"\\",target)}
+      else gsub(/\\/,"",target)
+    }
+  } else {
+    fname=substr(file_i,2,length(file_i)-2)
+    target=""
+  }
   if (fname ~ /\\\\/) {fname=gensub(/\\([^\\])/, "\\1", "g", fname); gsub(/\\\\/,"\\",fname)} # real backslash
   else gsub(/\\/,"",fname) # litteral display
-  if (target) {
-    if (target ~ /\\\\/) {target=gensub(/\\([^\\])/, "\\1", "g", fname); gsub(/\\\\/,"\\",target)}
-    else gsub(/\\/,"",target)
-  }
 
-  if (target) {
+  if (type=="l") {
     if (missing) {
       c_link=C_IND["?"] "_bg"
     } else {
