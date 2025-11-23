@@ -138,7 +138,6 @@ BEGIN {
   C_TYPE["p"]=C_EXT["pipe"]
   C_TYPE["s"]=C_EXT["socket"]
   C_TYPE["l"]=C_EXT["symlink"]
-  C_TYPE["x"]=C_EXT["exec"]
   C_TYPE["b"]=C_EXT["blockdev"]
   C_TYPE["c"]=C_EXT["chardev"]
   I_TYPE["-"]=I_EXT["file"]
@@ -146,9 +145,9 @@ BEGIN {
   I_TYPE["l"]=I_EXT["symlink"]
   I_TYPE["p"]=I_EXT["pipe"]
   I_TYPE["s"]=I_EXT["socket"]
-  I_TYPE["x"]=I_EXT["exec"]
   I_TYPE["b"]=I_EXT["blockdev"]
   I_TYPE["c"]=I_EXT["chardev"]
+  I_TYPE["*"]=I_EXT["exec"]
   C_IND["|"]=C_EXT["pipe"]
   C_IND["="]=C_EXT["socket"]
   C_IND["*"]=C_EXT["exec"]
@@ -173,11 +172,11 @@ $0=="" { print_ls(); print ""; next }
   if (flag_Z) context=$(c++)
   if (perms ~ /^c/ || perms ~ /^b/) size=$(c++)" "$(c++)
   else size=$(c++)
-  date=$(c++) " " $(c++); fname=$(c++); target=$(c+1)
+  date=$(c++) " " $c
   type=substr(perms,1,1)
   c_link=C_TYPE["-"]
   file_i=substr($0, index($0, "\""))
-  indicator=(substr(file_i,length(file_i)))
+  indicator=substr(file_i,length(file_i))
   if (indicator!="\"") file_i=substr(file_i, 1, length(file_i)-1)
   if (type=="l") {
     match(file_i, /^"(([^"\\]|\\.)*)"/, m1)
@@ -206,13 +205,12 @@ $0=="" { print_ls(); print ""; next }
   }
   ext=""
   if (match(fname, /\.[^.]+$/, ex)) ext=tolower(ex[0])
-
   col=C_TYPE[type]
   icon=I_TYPE[type]
   if (type=="-") {
-    if (index(perms, "x")>0) {
-    col=C_TYPE["x"]
-    icon=I_TYPE["x"]
+    if (indicator=="*") {
+      col=C_IND["*"]
+      icon=I_TYPE["*"]
     } else if (ext in C_EXT) col=C_EXT[ext]
     if (ext in I_EXT) icon=I_EXT[ext]
   }
