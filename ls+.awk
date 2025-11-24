@@ -3,13 +3,15 @@
 
 function print_multic() {
 # multicolumn output
-  if(!n) return
+  if (!n) return
   pad=2; width=TERMW
   # Max nb columns
-  Cmax=int((width-maxw-pad)/(minw+pad))
-  if (Cmax>n) Cmax=n
-  if (Cmax<1) Cmax=1
   if (flag_1) Cmax=1
+  else {
+      Cmax=int((width-maxw-pad)/(minw+pad))
+      if(Cmax>n) Cmax=n
+      else if (Cmax<1) Cmax=1
+  }
   # Try possible column counts
   for (C=Cmax;C>1;C--) {
     R=int((n+C-1)/C) # nb rows
