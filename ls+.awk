@@ -50,8 +50,8 @@ function print_long() {
     if (name_a[i]=="" || long_a[i]=="") continue
     if (flag_i) printf("%s%*s ", c_inum, max_inums, inums_a[i])
     if (flag_s) printf("%s%*s ", c_size, max_size, sizeb_a[i])
-    col=cols_a[i]
-    lcol="l" col
+    col=colors[cols_a[i]]
+    lcol=colors["l" cols_a[i]]
     perms=perms_a[i]
     perms_type=substr(perms,1,1)
     perms_owner=substr(perms,2,3)
@@ -60,20 +60,20 @@ function print_long() {
     perms_acl=substr(perms,11,1)
     if (perms_acl=="") perms_acl=" "
     if (USER==owner_a[i]) {
-      c_perms_owner=colors[lcol]
+      c_perms_owner=lcol
       c_owner=lc_user
     } else {
-      c_perms_owner=colors[col]
+      c_perms_owner=col
       c_owner=c_user
     }
     if (group_a[i] in user_groups) {
-      c_perms_group=colors[lcol]
+      c_perms_group=col
       c_group=lc_user
     } else {
-      c_perms_group=colors[col]
+      c_perms_group=lcol
       c_group=c_user
     }
-    perms=colors[lcol] perms_type RESET c_perms_owner perms_owner c_perms_group perms_group colors[lcol] perms_other perms_acl
+    perms=lcol perms_type RESET c_perms_owner perms_owner c_perms_group perms_group lcol perms_other perms_acl
     printf("%s ", perms)
     if (!(flag_g)) printf("%s%-*s ", c_owner, max_owner, owner_a[i])
     if (!(flag_G)) printf("%s%-*s ", c_group, max_group, group_a[i])
