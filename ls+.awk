@@ -5,36 +5,32 @@ function print_multic() {
 # multicolumn output
   bestC=1; pad=2; width=TERMW
   # Max nb columns
-  Cmax=1+int((width-maxw)/(minw+pad))
+  Cmax=1+int((width-maxw-pad)/(minw+pad))
   if (Cmax<1) Cmax=1
   if (Cmax>n) Cmax=n
   if (flag_1) Cmax=1
-  colw[1]=0
   # Try possible column counts
   for (C=Cmax;C>=1;C--) {
-    R=int((n+C-1)/C)
-    if (C==1) { bestC=1; break }
+    R=int((n+C-1)/C) # nb rows
+    if (C==1) break
     delete colw
     # per-column width
+    total=C*pad
     for (i=1;i<=n;i++) {
       c=int((i-1)/R)+1
-      if (vlen_a[i] > colw[c]) colw[c]=vlen_a[i]
+      if (vlen_a[i] > colw[c]) {
+        total+=vlen_a[i]-colw[c]
+        if(total>width) break
+        colw[c]=vlen_a[i]
+      }
     }
-    # total width
-    total=0
-    for (c=1;c<=C;c++) {
-      total+=colw[c]
-      if (total>width) break
-      if (c<C) total+=pad
-    }
-    if (total<=width) { bestC=C; break }
+    if (total<=width) break
   }
   # 1 col trivial print
-  if (bestC==1) {
+  if (C==1) {
     for (i=1;i<=n;i++) print short_a[i]
     return
   }
-  C=bestC
   # print rows
   for (r=1;r<=R;r++) {
     for (c=1;c<=C;c++) {
