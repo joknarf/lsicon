@@ -3,16 +3,16 @@
 
 function print_multic() {
 # multicolumn output
-  bestC=1; pad=2; width=TERMW
+  if(!n) return
+  pad=2; width=TERMW
   # Max nb columns
-  Cmax=1+int((width-maxw-pad)/(minw+pad))
-  if (Cmax<1) Cmax=1
+  Cmax=int((width-maxw-pad)/(minw+pad))
   if (Cmax>n) Cmax=n
+  if (Cmax<1) Cmax=1
   if (flag_1) Cmax=1
   # Try possible column counts
-  for (C=Cmax;C>=1;C--) {
+  for (C=Cmax;C>1;C--) {
     R=int((n+C-1)/C) # nb rows
-    if (C==1) break
     delete colw
     # per-column width
     total=C*pad
