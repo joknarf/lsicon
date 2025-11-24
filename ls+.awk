@@ -172,10 +172,10 @@ $0=="" { print_ls(); print ""; next }
   if (flag_s) sizeb=$(c++)
   perms=$(c++); links=$(c++); owner=$(c++); group=$(c++);
   if (flag_Z) context=$(c++)
-  if (perms ~ /^c/ || perms ~ /^b/) size=$(c++)" "$(c++)
+  type=substr(perms,1,1)
+  if (type=="c" || type=="b") size=$(c++)" "$(c++)
   else size=$(c++)
   date=$(c++) " " $c
-  type=substr(perms,1,1)
   c_link=C_TYPE["-"]
   file_i=substr($0, index($0, "\""))
   indicator=substr(file_i,length(file_i))
