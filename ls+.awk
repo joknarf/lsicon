@@ -176,29 +176,23 @@ $0=="" { print_ls(); print ""; next }
   if (type=="c" || type=="b") size=$(c++)" "$(c++)
   else size=$(c++)
   date=$(c++) " " $c
-  c_link=C_TYPE["-"]
   file_i=substr($0, index($0, "\""))
   indicator=substr(file_i,length(file_i))
   if (indicator!="\"") file_i=substr(file_i, 1, length(file_i)-1)
   if (type=="l") {
+    c_link=C_TYPE["-"]
     match(file_i, /^"(([^"\\]|\\.)*)"/, m1)
     fname=m1[1]
-    file_i=substr(file_i,length(fname)+8)
-    if(flag_l) target=unescape(substr(file_i,1,length(file_i)-1))
+    b=length(fname)+8 # "fname" -> " 
+    if(flag_l) target=unescape(substr(file_i,b,length(file_i)-b))
+    if (missing) c_link=C_IND["?"] "_bg"
+    else if (indicator in C_IND) c_link="l" C_IND[indicator]
+         else c_link="l" C_TYPE["-"]
   } else {
     fname=substr(file_i,2,length(file_i)-2)
     target=""
   }
   fname=unescape(fname)
-  if (type=="l") {
-    if (missing) {
-      c_link=C_IND["?"] "_bg"
-    } else {
-      if (indicator in C_IND) {
-        c_link="l" C_IND[indicator]
-      } else c_link="l" C_TYPE["-"]
-    }
-  }
   ext=""
   if (match(fname, /\.[^.]+$/, ex)) ext=tolower(ex[0])
   col=C_TYPE[type]
