@@ -52,7 +52,7 @@ LSI=$(readlink -f $0);LSI=${LSI%/*}
 : "${ICON_FILE:=$LSI/ls+.icons}"
 : "${COLOR_FILE:=$LSI/ls+.colors}"
 : "${THEME_FILE:=$LSI/ls+.theme}"
-TERM_COLS=$(tput cols) 2>/dev/null
+read _ TERM_COLS < <(stty size 2>/dev/null)
 : ${TERM_COLS:=80}
 # ls is missing an indicator for broken symlink, use color to get it
 export LS_COLORS="rs=:di=:ln=:mh=:pi=:so=:do=:bd=:cd=:or=:mi=1:su=:sg=:ca=:tw=:ow=:st=:ex=:"
