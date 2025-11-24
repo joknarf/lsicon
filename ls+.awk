@@ -17,7 +17,7 @@ function print_multic() {
     # per-column width
     total=C*pad
     for (i=1;i<=n;i++) {
-      c=int((i-1)/R)+1
+      c=int((i-1)/R)
       if (vlen_a[i] > colw[c]) {
         total+=vlen_a[i]-colw[c]
         if(total>width) break
@@ -33,12 +33,10 @@ function print_multic() {
   }
   # print rows
   for (r=1;r<=R;r++) {
-    for (c=1;c<=C;c++) {
-      i=(c-1)*R+r
+    for (c=0;c<C;c++) {
+      i=c*R+r
       if (i>n) break
-      if (c<C) spaces=colw[c]-vlen_a[i]+pad
-      else spaces=0
-      printf("%s%*s", short_a[i], spaces, "")
+      printf("%s%*s", short_a[i], colw[c]-vlen_a[i]+pad, "")
     }
     printf("\n")
   }
