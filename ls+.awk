@@ -67,10 +67,10 @@ function print_long() {
       c_owner=c_user
     }
     if (group_a[i] in user_groups) {
-      c_perms_group=col
+      c_perms_group=lcol
       c_group=lc_user
     } else {
-      c_perms_group=lcol
+      c_perms_group=col
       c_group=c_user
     }
     perms=lcol perms_type RESET c_perms_owner perms_owner c_perms_group perms_group lcol perms_other perms_acl
@@ -184,10 +184,10 @@ $0=="" { print_ls(); print ""; next }
     match(file_i, /^"(([^"\\]|\\.)*)"/, m1)
     fname=m1[1]
     b=length(fname)+8 # "fname" -> " 
-    if(flag_l) target=unescape(substr(file_i,b,length(file_i)-b))
+    if (flag_l) target=unescape(substr(file_i,b,length(file_i)-b))
     if (missing) c_link=C_IND["?"] "_bg"
     else if (indicator in C_IND) c_link="l" C_IND[indicator]
-         else c_link="l" C_TYPE["-"]
+    else c_link="l" C_TYPE["-"]
   } else {
     fname=substr(file_i,2,length(file_i)-2)
     target=""
@@ -206,14 +206,14 @@ $0=="" { print_ls(); print ""; next }
   }
 
   vlen=length(fname)+2
-  lcol="l"col
+  lcol=colors["l"col]
   if (vlen>maxw) maxw=vlen
   if (n==1 || vlen < minw) minw=vlen
   display_name=fname
   if (target != "") display_name=display_name " -> " colors[c_link] target
-  long=colors[lcol] icon " " display_name RESET
-  if (missing && !flag_l) lcol=C_IND["?"] "_bg"
-  short=colors[lcol] icon " " fname RESET
+  long=lcol icon " " display_name RESET
+  if (missing && !flag_l) lcol=colors[C_IND["?"] "_bg"]
+  short=lcol icon " " fname RESET
 
   if (length(inum)>max_inums) max_inums=length(inum)
   if (length(links)>max_links) max_links=length(links)
