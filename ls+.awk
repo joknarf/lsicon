@@ -48,8 +48,8 @@ function print_long() {
   total_line=""
   for (i=1;i<=n;i++) {
     if (name_a[i]=="" || long_a[i]=="") continue
-    if (flag_i) printf("%s%*s ", colors[C_INUM], max_inums, inums_a[i])
-    if (flag_s) printf("%s%*s ", colors[C_SIZE], max_size, sizeb_a[i])
+    if (flag_i) printf("%s%*s ", c_inum, max_inums, inums_a[i])
+    if (flag_s) printf("%s%*s ", c_size, max_size, sizeb_a[i])
     col=cols_a[i]
     lcol="l" col
     perms=perms_a[i]
@@ -61,24 +61,24 @@ function print_long() {
     if (perms_acl=="") perms_acl=" "
     if (USER==owner_a[i]) {
       c_perms_owner=colors[lcol]
-      c_owner=colors["l" C_USER]
+      c_owner=lc_user
     } else {
       c_perms_owner=colors[col]
-      c_owner=colors[C_USER]
+      c_owner=c_user
     }
     if (group_a[i] in user_groups) {
       c_perms_group=colors[lcol]
-      c_group=colors["l" C_USER]
+      c_group=lc_user
     } else {
       c_perms_group=colors[col]
-      c_group=colors[C_USER]
+      c_group=c_user
     }
     perms=colors[lcol] perms_type RESET c_perms_owner perms_owner c_perms_group perms_group colors[lcol] perms_other perms_acl
     printf("%s ", perms)
     if (!(flag_g)) printf("%s%-*s ", c_owner, max_owner, owner_a[i])
     if (!(flag_G)) printf("%s%-*s ", c_group, max_group, group_a[i])
-    if (flag_Z) printf(" %s%-*s", colors[C_CONTEXT], max_context,context_a[i])
-    printf(" %s%*s %s %s\n", colors[C_SIZE], max_size, size_a[i], colors[C_DATE] date_a[i], long_a[i])
+    if (flag_Z) printf(" %s%-*s", c_context, max_context,context_a[i])
+    printf(" %s%*s %s %s\n", c_size, max_size, size_a[i], c_date date_a[i], long_a[i])
   }
 }
 function fgcol(num) {
@@ -91,6 +91,11 @@ function print_ls() {
   if (flag_l) print_long()
   else print_multic()
   n=0; max_links=0; max_owner=0; max_group=0; max_size=0; max_inums=0; maxw=0;
+}
+function unescape(s) {
+  if (s ~ /\\\\/) { s=gensub(/\\([^\\])/, "\\1", "g", fname); gsub(/\\\\/,"\\",s) }
+  else gsub(/\\/,"",s)
+  return s
 }
 BEGIN {
   ESC="\033["
@@ -124,11 +129,12 @@ BEGIN {
       colors[$1"_bg"]=ESC "48;2;" $2 "m" ESC"38;2;235;235;235m" ESC"5m" # blink for mising
     }
   RESET=ESC "0m"
-  C_DATE=C_EXT["date"]
-  C_USER=C_EXT["user"]
-  C_SIZE=C_EXT["size"]
-  C_CONTEXT=C_EXT["context"]
-  C_INUM=C_EXT["inum"]
+  c_date=colors[C_EXT["date"]]
+  c_size=colors[C_EXT["size"]]
+  c_context=colors[C_EXT["context"]]
+  c_inum=colors[C_EXT["inum"]]
+  c_user=colors[C_EXT["user"]]
+  lc_user=colors["l" C_EXT["user"]]
   C_TYPE["-"]=C_EXT["file"]
   C_TYPE["d"]=C_EXT["folder"]
   C_TYPE["p"]=C_EXT["pipe"]
@@ -178,18 +184,12 @@ $0=="" { print_ls(); print ""; next }
     match(file_i, /^"(([^"\\]|\\.)*)"/, m1)
     fname=m1[1]
     file_i=substr(file_i,length(fname)+8)
-    if(flag_l) {
-      target=substr(file_i,1,length(file_i)-1)
-      if (target ~ /\\\\/) {target=gensub(/\\([^\\])/, "\\1", "g", fname); gsub(/\\\\/,"\\",target)}
-      else gsub(/\\/,"",target)
-    }
+    if(flag_l) target=unescape(substr(file_i,1,length(file_i)-1))
   } else {
     fname=substr(file_i,2,length(file_i)-2)
     target=""
   }
-  if (fname ~ /\\\\/) {fname=gensub(/\\([^\\])/, "\\1", "g", fname); gsub(/\\\\/,"\\",fname)} # real backslash
-  else gsub(/\\/,"",fname) # litteral display
-
+  fname=unescape(fname)
   if (type=="l") {
     if (missing) {
       c_link=C_IND["?"] "_bg"
