@@ -30,7 +30,7 @@ function print_multic() {
   }
   # 1 col trivial print
   if (C==1) {
-    for (i=1;i<=n;i++) print short_a[i]
+    for (i=1;i<=n;i++) print name_a[i]
     return
   }
   # print rows
@@ -38,7 +38,7 @@ function print_multic() {
     for (c=0;c<C;c++) {
       i=c*R+r
       if (i>n) break
-      printf("%s%*s", short_a[i], colw[c]-vlen_a[i]+pad, "")
+      printf("%s%*s", name_a[i], colw[c]-vlen_a[i]+pad, "")
     }
     printf("\n")
   }
@@ -47,7 +47,6 @@ function print_long() {
   if (total_line) print total_line
   total_line=""
   for (i=1;i<=n;i++) {
-    if (name_a[i]=="" || long_a[i]=="") continue
     if (flag_i) printf("%s%*s ", c_inum, max_inums, inums_a[i])
     if (flag_s) printf("%s%*s ", c_size, max_size, sizeb_a[i])
     col=colors[cols_a[i]]
@@ -59,26 +58,15 @@ function print_long() {
     perms_other=substr(perms,8,3)
     perms_acl=substr(perms,11,1)
     if (perms_acl=="") perms_acl=" "
-    if (USER==owner_a[i]) {
-      c_perms_owner=lcol
-      c_owner=lc_user
-    } else {
-      c_perms_owner=col
-      c_owner=c_user
-    }
-    if (group_a[i] in user_groups) {
-      c_perms_group=lcol
-      c_group=lc_user
-    } else {
-      c_perms_group=col
-      c_group=c_user
-    }
-    perms=lcol perms_type RESET c_perms_owner perms_owner c_perms_group perms_group lcol perms_other perms_acl
-    printf("%s ", perms)
+    if (USER==owner_a[i]) { c_perms_owner=lcol; c_owner=lc_user }
+    else { c_perms_owner=col; c_owner=c_user }
+    if (group_a[i] in user_groups) { c_perms_group=lcol; c_group=lc_user }
+    else { c_perms_group=col; c_group=c_user }
+    printf("%s ", lcol perms_type RESET c_perms_owner perms_owner c_perms_group perms_group lcol perms_other perms_acl)
     if (!(flag_g)) printf("%s%-*s ", c_owner, max_owner, owner_a[i])
     if (!(flag_G)) printf("%s%-*s ", c_group, max_group, group_a[i])
-    if (flag_Z) printf(" %s%-*s", c_context, max_context,context_a[i])
-    printf(" %s%*s %s %s\n", c_size, max_size, size_a[i], c_date date_a[i], long_a[i])
+    if (flag_Z) printf(" %s%-*s", c_context, max_context, context_a[i])
+    printf(" %s%*s %s %s\n", c_size, max_size, size_a[i], c_date date_a[i], name_a[i])
   }
 }
 function fgcol(num) {
@@ -204,29 +192,29 @@ $0=="" { print_ls(); print ""; next }
     } else if (ext in C_EXT) col=C_EXT[ext]
     if (ext in I_EXT) icon=I_EXT[ext]
   }
-
+  ++n
   vlen=length(fname)+2
   lcol=colors["l"col]
   if (vlen>maxw) maxw=vlen
   if (n==1 || vlen < minw) minw=vlen
-  display_name=fname
-  if (target != "") display_name=display_name " -> " colors[c_link] target
-  long=lcol icon " " display_name RESET
-  if (missing && !flag_l) lcol=colors[C_IND["?"] "_bg"]
-  short=lcol icon " " fname RESET
-
-  if (length(inum)>max_inums) max_inums=length(inum)
-  if (length(links)>max_links) max_links=length(links)
-  if (length(owner)>max_owner) max_owner=length(owner)
-  if (length(group)>max_group) max_group=length(group)
-  if (length(size)>max_size) max_size=length(size)
-  if (length(sizeb)>max_size) max_size=length(sizeb)
-  if (length(context)>max_context) max_context=length(context)
-  ++n
-  inums_a[n]=inum; perms_a[n]=perms; links_a[n]=links; owner_a[n]=owner; group_a[n]=group; size_a[n]=size;
-  date_a[n]=date; name_a[n]=fname; short_a[n]=short; long_a[n]=long; vlen_a[n]=vlen
-  context_a[n]=context; sizeb_a[n]=sizeb
-  cols_a[n]=col
+  if (flag_l) {
+    display_name=fname
+    if (target) display_name=display_name " -> " colors[c_link] target
+    fname=lcol icon " " display_name RESET
+    if (length(inum)>max_inums) max_inums=length(inum)
+    #if (length(links)>max_links) max_links=length(links)
+    if (length(owner)>max_owner) max_owner=length(owner)
+    if (length(group)>max_group) max_group=length(group)
+    if (length(size)>max_size) max_size=length(size)
+    if (length(sizeb)>max_size) max_size=length(sizeb)
+    if (length(context)>max_context) max_context=length(context)
+    inums_a[n]=inum; perms_a[n]=perms;  owner_a[n]=owner; group_a[n]=group; size_a[n]=size;
+    date_a[n]=date; context_a[n]=context; sizeb_a[n]=sizeb; #links_a[n]=links;
+  } else {
+    if (missing) lcol=colors[C_IND["?"] "_bg"]
+    fname=lcol icon " " fname RESET
+  }
+  name_a[n]=fname; vlen_a[n]=vlen; cols_a[n]=col
 }
 END {
   if (flag_l) print_long()
