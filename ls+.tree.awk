@@ -42,7 +42,6 @@ $0=="" { next }
   match($0, /^(.*)\[(.*)\] (.*)$/, m)
   prefix=m[1]
   $0 = m[2]
-  $1=$1
   file_i = m[3]
   if (flag_i) inum=$(c++)
   if (flag_s) sizeb=$(c++)
