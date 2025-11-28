@@ -51,9 +51,6 @@ $0=="" { next }
   if (type=="c" || type=="b") size=$(c++)" "$(c++)
   else size=$(c++)
   date=$(c++) " " $c
-  if (NR==1)
-    start_f = index($0, "\"")
-  #file_i=substr($0, start_f)
   suffix=""
   if (match(file_i,/(.*)(  \[error opening.*\])/, m1)) {
     file_i=m1[1]
@@ -61,7 +58,6 @@ $0=="" { next }
   }
   indicator=substr(file_i,length(file_i))
   if (indicator!="\"") file_i=substr(file_i, 1, length(file_i)-1)
-  #prefix=substr(file_i,1,index(file_i,"\"")-1)
   file_i=substr(file_i,index(file_i,"\""))
   if (type=="l") {
     c_link=C_TYPE["-"]
