@@ -5,9 +5,10 @@
 
 # lsicon
 
-Simplest and fastest `ls` command enhancer in less than 16K (only uses bash/ls/awk)
+Simplest and fastest `ls` command enhancer in less than 16K (only uses bash/ls/tree/awk)
 
 ![image](https://github.com/user-attachments/assets/d76ec9f8-b745-46ef-8ce1-2c667ba7c578)
+![image](https://github.com/user-attachments/assets/ce86cf0b-84be-4d29-8c2d-31dac0b170ba)
 
 Much faster than other "modern" tools (here /usr containing ~150000 files):
 
@@ -21,11 +22,14 @@ Much faster than other "modern" tools (here /usr containing ~150000 files):
 
 ## features
 
-* all GNU ls features
+* all GNU ls features except
+  * -T displays tree view
+  * currently fixed time format `+%y-%m-%d %H:%M`
 * display colors/icons according to file types/extensions/permissions
 * display symlink target according to target file types/permissions
 * display broken symlink
 * highlight current user/groups and permissions
+* dir/files tree with `-T`
 * easy customization for colors/icons/extensions
 
 ## Prerequisites
