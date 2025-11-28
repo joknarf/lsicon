@@ -5,7 +5,7 @@
 
 # lsicon
 
-Simplest and fastest `ls` command enhancer in less than 16K (only uses bash/ls/tree/awk)
+Simplest and fastest `ls` command enhancer in less than 20K (only uses bash/ls/tree/awk)
 
 ![image](https://github.com/user-attachments/assets/d76ec9f8-b745-46ef-8ce1-2c667ba7c578)
 ![image](https://github.com/user-attachments/assets/ce86cf0b-84be-4d29-8c2d-31dac0b170ba)
@@ -38,6 +38,7 @@ Much faster than other "modern" tools (here /usr containing ~150000 files):
   * on BSD/MacOS/Alpine coreutils package needed
 * GNU awk
   * on BSD/MacOS/Alpine gawk package needed
+* tree (for tree view only)
 * bash
 * Nerd Font in your Terminal
 
