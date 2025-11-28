@@ -54,9 +54,8 @@ $0=="" { next }
   file_i=substr($0, start_f)
   suffix=""
   if (match(file_i,/(.*)(  \[error opening.*\])/, m1)) {
-    print "ERROR", m1[1], "--", m1[2]
     file_i=m1[1]
-    suffix=colors["lred"] m1[2]  
+    suffix=colors["lred"] m1[2]
   }
   indicator=substr(file_i,length(file_i))
   if (indicator!="\"") file_i=substr(file_i, 1, length(file_i)-1)
