@@ -67,7 +67,7 @@ while [ "$1" ];do
     shift
 done
 [ ! "$COLOR" ] && [ ! -t 1 ] && COLOR=false || COLOR=true
-! $COLOR && exec $ls "${ARGSLS[@]}"
+! $COLOR && ! $TREE && exec $ls "${ARGSLS[@]}"
 [ -r ~/.config/ls+/icons ] && ICON_FILE=~/.config/ls+/icons
 [ -r ~/.config/ls+/colors ] && COLOR_FILE=~/.config/ls+/colors
 [ -r ~/.config/ls+/theme ] && THEME_FILE=~/.config/ls+/theme
