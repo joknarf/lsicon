@@ -31,16 +31,18 @@ function print_tree() {
 BEGIN {
   init_theme()
 }
-#/error opening/ { nerr++;print colors["lred"] $0 RESET >"/dev/stderr"; next }
 $0=="" { next }
 /^ *[0-9]+.* used in/{ sum=$0; next}
 {
   if (/\x1b\[1m/) missing=1; else missing=0
-  sub(/\]/,"")
-  gsub(/^\[|\x1b\[[10]?[mK]/, "") # leading spaces/ANSI codes
+  gsub(/\x1b\[[10]?[mK]/, "") # leading spaces/ANSI codes
 }
 {
   c=1
+  match($0, /^(.*)\[(.*)\] (.*)$/, m)
+  prefix=m[1]
+  $0 = m[2]
+  file_i = m[3]
   if (flag_i) inum=$(c++)
   if (flag_s) sizeb=$(c++)
   perms=$(c++); owner=$(c++); group=$(c++);
@@ -49,18 +51,13 @@ $0=="" { next }
   if (type=="c" || type=="b") size=$(c++)" "$(c++)
   else size=$(c++)
   date=$(c++) " " $c
-  if (NR-nerr==1)
-    start_f = index($0, "\"")
-  file_i=substr($0, start_f)
   suffix=""
   if (match(file_i,/(.*)(  \[error opening.*\])/, m1)) {
-    print "ERROR", m1[1], "--", m1[2]
     file_i=m1[1]
-    suffix=colors["lred"] m1[2]  
+    suffix=colors["lred"] m1[2]
   }
   indicator=substr(file_i,length(file_i))
   if (indicator!="\"") file_i=substr(file_i, 1, length(file_i)-1)
-  prefix=substr(file_i,1,index(file_i,"\"")-1)
   file_i=substr(file_i,index(file_i,"\""))
   if (type=="l") {
     c_link=C_TYPE["-"]
