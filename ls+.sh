@@ -11,7 +11,7 @@ USER_ID=$(id -un)
 COLOR=''
 ARGSLS=("$@")
 ARGS=("-lFQ" "--color" "--time-style=+%y-%m-%d %H:%M")
-ARGSTREE=(--metafirst -pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
+ARGSTREE=(-pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
 FLAGS=()
 TREE=false
 while [ "$1" ];do
@@ -81,7 +81,7 @@ read _ TERM_COLS <<<$(stty size 2>/dev/null)
 export LS_COLORS="rs=:di=:ln=:mh=:pi=:so=:do=:bd=:cd=:or=:mi=1:su=:sg=:ca=:tw=:ow=:st=:ex=:"
 set -o pipefail
 if $TREE ;then
-    tree "${ARGSTREE[@]}" 2>&1 |awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
+    tree "${ARGSTREE[@]}" |awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
         -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -f "$LSI/ls+.com.awk" -f "$LSI/ls+.tree.awk"
 else
     $ls -1 "${ARGS[@]}" 2>&1 | awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
