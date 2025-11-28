@@ -33,9 +33,16 @@ BEGIN {
 }
 $0=="" { next }
 /^ *[0-9]+.* used in/{ sum=$0; next}
+# old tree not computing params dir
+!/\[.*\] / { 
+  if (/\"/)
+    $0="[d????????? ? ? ? ??-??-?? ??:??] " $0;
+  else
+    $0="[d????????? ? ? ? ??-??-?? ??:??] \"" $0 "\"";
+}
 {
   if (/\x1b\[1m/) missing=1; else missing=0
-  gsub(/\x1b\[[10]?[mK]/, "") # leading spaces/ANSI codes
+  gsub(/\x1b\[[10]+?[mK]/, "") # leading spaces/ANSI codes
 }
 {
   c=1
@@ -52,7 +59,7 @@ $0=="" { next }
   else size=$(c++)
   date=$(c++) " " $c
   suffix=""
-  if (match(file_i,/(.*)(  \[error opening.*\])/, m1)) {
+  if (match(file_i,/(.*)( +\[error opening.*\])/, m1)) {
     file_i=m1[1]
     suffix=colors["lred"] m1[2]
   }
