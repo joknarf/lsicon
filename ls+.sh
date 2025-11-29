@@ -10,7 +10,7 @@ USER_GROUPS=$(id -Gn)
 USER_ID=$(id -un)
 COLOR=''
 ARGSLS=("$@")
-ARGS=("-lFQ" "--color" "--time-style=+%y-%m-%d %H:%M")
+ARGS=("-lFQ" "--color" "--time-style=+%y-%m-%d %H:%M" "--width=0")
 ARGSTREE=(-pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
 FLAGS=()
 TREE=false
@@ -18,9 +18,9 @@ while [ "$1" ];do
     case "$1" in
         --help|--version) exec ls "$1";;
         --) break ;;
-        --color*always|--color) COLOR=true; shift;continue ;;
+        --color*always|--color|-C) COLOR=true; shift;continue ;;
         --color*never) COLOR=false; shift;continue ;;
-        --color=*|-w|--zero|-b) shift;continue;;
+        --color=*|-w|--width*|--zero|-b) shift;continue;;
         --indicator-style|-m|-N|-p) shift;continue;;
         --time-style|--quoting-style) shift;continue;;
         -g) FLAGS+=(g);shift;continue;;
@@ -28,7 +28,7 @@ while [ "$1" ];do
         -o) FLAGS+=(l G);shift;continue;;
         -l|--format=long) FLAGS+=(l) ;;
         -Z|--context) FLAGS+=(Z) ;;
-        -t|-c|-U|-v|-r) ARGSTREE+=($1);;
+        -t|-c|-U|-v|-r) ARGSTREE+=("$1");;
         -i|--inode) FLAGS+=(i);ARGSTREE+=(--inodes) ;;
         -h|--human-readable) ARGSTREE+=(-h);;
         -a|--all) ARGSTREE+=(-a);;
@@ -36,12 +36,11 @@ while [ "$1" ];do
         --dereference-command-line-symlink-to-dir) ARGSTREE+=(-l);;
         --group-directories-first) ARGSTREE+=(--dirsfirst);;
         -S) ARGSTREE+=(--sort=size);;
+        --sort=extension) ;;
+        --sort=*) ARGSTREE+=("$1");;
         -1|--format=single-column) FLAGS+=(1) ;;
         -s|--size) FLAGS+=(s) ;;
-        -n|--numeric-uid-gid)
-            USER_GROUPS=$(id -G)
-            USER_ID=$(id -u)
-        ;;
+        -n|--numeric-uid-gid) USER_GROUPS=$(id -G); USER_ID=$(id -u);;
         -T|--tree) TREE=true;shift;continue ;;
         -[!-]*)
             a="${1#-}"
@@ -51,7 +50,7 @@ while [ "$1" ];do
                 a|d|h|t|c|U|v|r) ARGSTREE+=(-$i);;
                 i) ARGSTREE+=(--inodes);;
                 S) ARGSTREE+=(--sort=size);;
-                n) USER_GROUPS=$(id -G) && USER_ID=$(id -u);;
+                n) USER_GROUPS=$(id -G); USER_ID=$(id -u);;
                 T) TREE=true;;
                 esac
                 [[ $i != [gGT] ]] && ARGS+=(-$i)
@@ -61,7 +60,7 @@ while [ "$1" ];do
             shift
             continue
         ;;
-        *) ARGSTREE+=("$1");;
+        [!-]*) ARGSTREE+=("$1");;
     esac
     ARGS+=("$1")
     shift
@@ -78,12 +77,14 @@ LSI=$(readlink -f $0);LSI=${LSI%/*}
 read _ TERM_COLS <<<$(stty size 2>/dev/null)
 : ${TERM_COLS:=80}
 # ls is missing an indicator for broken symlink, use color to get it
-export LS_COLORS="rs=:di=:ln=:mh=:pi=:so=:do=:bd=:cd=:or=:mi=1:su=:sg=:ca=:tw=:ow=:st=:ex=:"
+
 set -o pipefail
 if $TREE ;then
+    export LS_COLORS="rs=0:di=0:ln=0:mh=0:pi=0:so=0:do=0:bd=0:cd=0:or=1:mi=0:su=0:sg=0:ca=0:tw=0:ow=0:st=0:ex=0:"
     tree "${ARGSTREE[@]}" |awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
         -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -f "$LSI/ls+.com.awk" -f "$LSI/ls+.tree.awk"
 else
+    export LS_COLORS="rs=:di=:ln=:mh=:pi=:so=:do=:bd=:cd=:or=:mi=1:su=:sg=:ca=:tw=:ow=:st=:ex=:"
     $ls -1 "${ARGS[@]}" 2>&1 | awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
         -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -f "$LSI/ls+.com.awk" -f "$LSI/ls+.awk"
 fi
