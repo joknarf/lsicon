@@ -4,6 +4,19 @@
 # usage: ls+ [ls options]
 #
 
+usage() {
+    printf "%s\n" "usage: ls+ [-T [-L maxlevel -P <pattern>]] [LSOPTION]... [FILE]...
+ls+: ls/tree decorator
+ls+ takes same arguments as ls command
+Exception:
+    -T will display dir/files tree using tree command
+    -P <pattern> limit files matching pattern for tree view
+    -L <maxlevel> limit tree depth for tree view
+
+To see ls help: \ls --help
+"
+    exit 0
+}
 type gls >/dev/null 2>&1 && ls="gls" || ls="ls"
 type gawk >/dev/null 2>&1 && awk="gawk" || awk="awk"
 USER_GROUPS=$(id -Gn)
@@ -17,7 +30,7 @@ TREE=false
 skip=false
 while [ "$1" ];do
     case "$1" in
-        --help|--version) exec ls "$1";;
+        --help|--version) usage "$1";;
         --) break ;;
         --color*always|--color|-C) COLOR=true; shift;continue ;;
         --color*never) COLOR=false; shift;continue ;;
@@ -29,7 +42,7 @@ while [ "$1" ];do
         -o) FLAGS+=(l G);shift;continue;;
         -l|--format=long) FLAGS+=(l) ;;
         -Z|--context) FLAGS+=(Z) ;;
-        -t|-c|-U|-v|-r|-I|-P) ARGSTREE+=("$1");;
+        -t|-c|-U|-v|-r|-I|-P|-U|-L) ARGSTREE+=("$1");;
         -i|--inode) FLAGS+=(i);ARGSTREE+=(--inodes) ;;
         -h|--human-readable) ARGSTREE+=(-h);;
         -a|--all) ARGSTREE+=(-a);;
@@ -50,7 +63,7 @@ while [ "$1" ];do
             while [ "$a" ];do
                 i="${a:0:1}"
                 case "$i" in
-                a|d|h|t|c|U|v|r) ARGSTREE+=(-$i);;
+                a|d|h|t|c|U|v|r|U) ARGSTREE+=(-$i);;
                 i) ARGSTREE+=(--inodes);;
                 S) ARGSTREE+=(--sort=size);;
                 n) USER_GROUPS=$(id -G); USER_ID=$(id -u);;
@@ -64,10 +77,18 @@ while [ "$1" ];do
             continue
         ;;
         [!-]*) ARGSTREE+=("$1");;
+        --) break;
     esac
     ARGS+=("$1")
     shift
 done
+ARGS+=("$@");ARGSTREE+=("$@")
+# reversed tree -t
+$TREE && [[ " ${ARGSTREE[*]} " = *\ -t\ * ]] && {
+    [[ " ${ARGSTREE[*]} " = *\ -r\ * ]] && {
+        for ((i=0; i<${#ARGSTREE[@]}; i++));do [ "${ARGSTREE[i]}" = '-r' ] && unset 'ARGSTREE[i]';done
+    } || ARGSTREE=(-r "${ARGSTREE[@]}")
+}
 [ ! "$COLOR" ] && [ ! -t 1 ] && COLOR=false || COLOR=true
 ! $COLOR && ! $TREE && exec $ls "${ARGSLS[@]}"
 [ -r ~/.config/ls+/icons ] && ICON_FILE=~/.config/ls+/icons
