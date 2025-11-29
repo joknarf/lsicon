@@ -42,7 +42,7 @@ while [ "$1" ];do
         -o) FLAGS+=(l G);shift;continue;;
         -l|--format=long) FLAGS+=(l) ;;
         -Z|--context) FLAGS+=(Z) ;;
-        -t|-c|-U|-v|-r|-I|-P|-U|-L) ARGSTREE+=("$1");;
+        -t|-c|-U|-v|-r|-I|-P|-L|--prune) ARGSTREE+=("$1");;
         -i|--inode) FLAGS+=(i);ARGSTREE+=(--inodes) ;;
         -h|--human-readable) ARGSTREE+=(-h);;
         -a|--all) ARGSTREE+=(-a);;
@@ -63,7 +63,7 @@ while [ "$1" ];do
             while [ "$a" ];do
                 i="${a:0:1}"
                 case "$i" in
-                a|d|h|t|c|U|v|r|U) ARGSTREE+=(-$i);;
+                a|d|h|t|c|U|v|r|I|P|L) ARGSTREE+=(-$i);;
                 i) ARGSTREE+=(--inodes);;
                 S) ARGSTREE+=(--sort=size);;
                 n) USER_GROUPS=$(id -G); USER_ID=$(id -u);;
@@ -105,6 +105,7 @@ read _ TERM_COLS <<<$(stty size 2>/dev/null)
 set -o pipefail
 if $TREE ;then
     export LS_COLORS="rs=0:di=0:ln=0:mh=0:pi=0:so=0:do=0:bd=0:cd=0:or=1:mi=0:su=0:sg=0:ca=0:tw=0:ow=0:st=0:ex=0:"
+    export TREE_COLORS="$LS_COLORS"
     tree "${ARGSTREE[@]}" |awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
         -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -f "$LSI/ls+.com.awk" -f "$LSI/ls+.tree.awk"
 else
