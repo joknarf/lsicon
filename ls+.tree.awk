@@ -92,7 +92,7 @@ $0=="" { next }
   lcol=colors["l"col]
   display_name=fname
   if (target) display_name=display_name " -> " colors[c_link] target
-  fname=prefix lcol icon " " display_name suffix RESET
+  fname=c_tree prefix lcol icon " " display_name suffix RESET
   if (length(inum)>max_inums) max_inums=length(inum)
   #if (length(links)>max_links) max_links=length(links)
   if (length(owner)>max_owner) max_owner=length(owner)

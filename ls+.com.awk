@@ -47,6 +47,7 @@ function init_theme() {
   c_inum=colors[C_EXT["inum"]]
   c_user=colors[C_EXT["user"]]
   lc_user=colors["l" C_EXT["user"]]
+  c_tree=colors[C_EXT["tree"]]
   C_TYPE["-"]=C_EXT["file"]
   C_TYPE["d"]=C_EXT["folder"]
   C_TYPE["p"]=C_EXT["pipe"]
