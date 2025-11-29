@@ -9,6 +9,14 @@ function unescape(s) {
   else gsub(/\\/,"",s)
   return s
 }
+function wildtore(p) {
+    re = p
+    gsub(/\./, "\\.", re)    # escape literal dots
+    gsub(/\*/, ".*", re)
+    gsub(/\?/, ".", re)
+    return "^"re"$"
+}
+
 function init_theme() {
   ESC="\033["
   split(GROUPS, user_groups)
@@ -22,6 +30,8 @@ function init_theme() {
   flag_g=("g" in flags)
   flag_G=("G" in flags)
   flag_1=("1" in flags)
+  flag_P=("P" in flags)
+  if(flag_P) repat=wildtore(PATTERN)
   while ((getline < iconfile) > 0)
     for(i=2;i<=NF;i++) I_EXT[$i]=$1
   close(iconfile)

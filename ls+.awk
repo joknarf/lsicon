@@ -113,6 +113,7 @@ $0=="" { print_ls(); print ""; next }
     target=""
   }
   fname=unescape(fname)
+  if(flag_P && gensub(/^.*\//,"",1,fname) !~ repat) next
   ext=""
   if (match(fname, /\.[^.]+$/, ex)) ext=tolower(ex[0])
   col=C_TYPE[type]

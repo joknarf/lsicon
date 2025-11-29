@@ -43,7 +43,8 @@ while [ "$1" ];do
         -o) FLAGS+=(l G);shift;continue;;
         -l|--format=long) FLAGS+=(l) ;;
         -Z|--context) FLAGS+=(Z) ;;
-        -t|-c|-U|-v|-r|-I|-P|-L) ARGSTREE+=("$1");;
+        -P) ARGSTREE+=("$1" "$2");FLAGS+=(P);PATTERN="$2";shift 2;continue;;
+        -t|-c|-U|-v|-r|-I|-L) ARGSTREE+=("$1");;
         --prune|-f) ARGSTREE+=("$1");shift;continue;;
         -i|--inode) FLAGS+=(i);ARGSTREE+=(--inodes) ;;
         -h|--human-readable) ARGSTREE+=(-h);;
@@ -60,18 +61,22 @@ while [ "$1" ];do
         -s|--size) FLAGS+=(s) ;;
         -n|--numeric-uid-gid) USER_GROUPS=$(id -G); USER_ID=$(id -u);;
         -T|--tree) TREE=true;shift;continue ;;
+        -z|--zeroindent) ARGSTREE+=(-i);shift;continue;;
+        --find) TREE=true;ARGSTREE+=(--prune -ifP "$2");PATTERN="$2";FLAGS+=(P);shift 2;continue;;
+        --find=*) TREE=true;PATTERN="${1#*=}";ARGSTREE+=(--prune -ifP "$PATTERN");FLAGS+=(P);shift;continue;;
         -[!-]*)
             a="${1#-}"
+            [[ $a = *P ]] && { ARGSTREE+=(-P "$2"); PATTERN="$2"; FLAGS+=(P) ; a=${a%P};shift; }
             while [ "$a" ];do
                 i="${a:0:1}"
                 case "$i" in
-                a|d|h|t|c|U|v|r|I|P|L) ARGSTREE+=(-$i);;
+                a|d|h|t|c|U|v|r|I|P|L|z) ARGSTREE+=(-$i);;
                 i) ARGSTREE+=(--inodes);;
                 S) ARGSTREE+=(--sort=size);;
                 n) USER_GROUPS=$(id -G); USER_ID=$(id -u);;
                 T) TREE=true;;
                 esac
-                [[ $i != [gGT] ]] && ARGS+=(-$i)
+                [[ $i != [gGTPz] ]] && ARGS+=(-$i)
                 FLAGS+=("${a:0:1}")
                 a="${a:1}"
             done
@@ -109,9 +114,9 @@ if $TREE ;then
     export LS_COLORS="rs=0:di=0:ln=0:mh=0:pi=0:so=0:do=0:bd=0:cd=0:or=1:mi=0:su=0:sg=0:ca=0:tw=0:ow=0:st=0:ex=0:"
     export TREE_COLORS="$LS_COLORS"
     tree "${ARGSTREE[@]}" |awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
-        -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -f "$LSI/ls+.com.awk" -f "$LSI/ls+.tree.awk"
+        -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -v PATTERN="$PATTERN" -f "$LSI/ls+.com.awk" -f "$LSI/ls+.tree.awk"
 else
     export LS_COLORS="rs=:di=:ln=:mh=:pi=:so=:do=:bd=:cd=:or=:mi=1:su=:sg=:ca=:tw=:ow=:st=:ex=:"
     $ls -1 "${ARGS[@]}" 2>&1 | awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
-        -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -f "$LSI/ls+.com.awk" -f "$LSI/ls+.awk"
+        -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -v PATTERN="$PATTERN" -f "$LSI/ls+.com.awk" -f "$LSI/ls+.awk"
 fi
