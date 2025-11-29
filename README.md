@@ -49,7 +49,7 @@ You can use a plugin manager, like the famous [joknarf/thefly](https://github.co
 . <(curl https://raw.githubusercontent.com/joknarf/thefly/main/thefly) install
 fly add joknarf/lsicon
 ```
-or just clone the repo, and put `ls+*` files in dir in your PATH
+or just clone the repo, and put `ls+*` files in dir in your PATH, or just create a link to `ls+`
 ```
 git clone https://github.com/joknarf/lsicon
 ```
