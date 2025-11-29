@@ -14,6 +14,7 @@ ARGS=("-lFQ" "--color" "--time-style=+%y-%m-%d %H:%M" "--width=0")
 ARGSTREE=(-pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
 FLAGS=()
 TREE=false
+skip=false
 while [ "$1" ];do
     case "$1" in
         --help|--version) exec ls "$1";;
@@ -28,7 +29,7 @@ while [ "$1" ];do
         -o) FLAGS+=(l G);shift;continue;;
         -l|--format=long) FLAGS+=(l) ;;
         -Z|--context) FLAGS+=(Z) ;;
-        -t|-c|-U|-v|-r) ARGSTREE+=("$1");;
+        -t|-c|-U|-v|-r|-I|-P) ARGSTREE+=("$1");;
         -i|--inode) FLAGS+=(i);ARGSTREE+=(--inodes) ;;
         -h|--human-readable) ARGSTREE+=(-h);;
         -a|--all) ARGSTREE+=(-a);;
@@ -36,9 +37,11 @@ while [ "$1" ];do
         --dereference-command-line-symlink-to-dir) ARGSTREE+=(-l);;
         --group-directories-first) ARGSTREE+=(--dirsfirst);;
         -S) ARGSTREE+=(--sort=size);;
+        --ignore=*|--hide=*) ARGSTREE+=(-I "${1#*=}");;
         --sort=extension) ;;
         --sort=*) ARGSTREE+=("$1");;
         -1|--format=single-column) FLAGS+=(1) ;;
+        --format=*) shift;continue;;
         -s|--size) FLAGS+=(s) ;;
         -n|--numeric-uid-gid) USER_GROUPS=$(id -G); USER_ID=$(id -u);;
         -T|--tree) TREE=true;shift;continue ;;

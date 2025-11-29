@@ -6,7 +6,6 @@ function print_tree() {
   total_line=""
   for (i=1;i<=n;i++) {
     if (flag_i) printf("%s%*s ", c_inum, max_inums, inums_a[i])
-    if (flag_s) printf("%s%*s ", c_size, max_size, sizeb_a[i])
     col=colors[cols_a[i]]
     lcol=colors["l" cols_a[i]]
     if (flag_l) {
@@ -51,9 +50,7 @@ $0=="" { next }
   $0 = m[2]
   file_i = m[3]
   if (flag_i) inum=$(c++)
-  if (flag_s) sizeb=$(c++)
   perms=$(c++); owner=$(c++); group=$(c++);
-  if (flag_Z) context=$(c++)
   type=substr(perms,1,1)
   if (type=="c" || type=="b") size=$(c++)" "$(c++)
   else size=$(c++)
@@ -92,10 +89,7 @@ $0=="" { next }
     if (ext in I_EXT) icon=I_EXT[ext]
   }
   ++n
-  vlen=length(fname)+2
   lcol=colors["l"col]
-  if (vlen>maxw) maxw=vlen
-  if (n==1 || vlen < minw) minw=vlen
   display_name=fname
   if (target) display_name=display_name " -> " colors[c_link] target
   fname=prefix lcol icon " " display_name suffix RESET
@@ -104,11 +98,8 @@ $0=="" { next }
   if (length(owner)>max_owner) max_owner=length(owner)
   if (length(group)>max_group) max_group=length(group)
   if (length(size)>max_size) max_size=length(size)
-  if (length(sizeb)>max_size) max_size=length(sizeb)
-  if (length(context)>max_context) max_context=length(context)
   inums_a[n]=inum; perms_a[n]=perms;  owner_a[n]=owner; group_a[n]=group; size_a[n]=size;
-  date_a[n]=date; context_a[n]=context; sizeb_a[n]=sizeb; #links_a[n]=links;
-  name_a[n]=fname; vlen_a[n]=vlen; cols_a[n]=col
+  date_a[n]=date; name_a[n]=fname; cols_a[n]=col
 }
 END {
   print_tree()
