@@ -23,7 +23,7 @@ USER_GROUPS=$(id -Gn)
 USER_ID=$(id -un)
 COLOR=''
 ARGSLS=("$@")
-ARGS=("-lFQ" "--color" "--time-style=+%y-%m-%d %H:%M" "--width=0")
+ARGS=("-lFQ" "--color" "--time-style=+%y-%m-%d %H:%M")
 ARGSTREE=(-pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
 FLAGS=()
 TREE=false
@@ -35,8 +35,8 @@ while [ "$1" ];do
         --color*always|--color|-C) COLOR=true; shift;continue ;;
         --color*never) COLOR=false; shift;continue ;;
         --color=*|-w|--width*|--zero|-b) shift;continue;;
-        --indicator-style|-m|-N|-p) shift;continue;;
-        --time-style|--quoting-style) shift;continue;;
+        --indicator-style*|-m|-N|-p) shift;continue;;
+        --time-style*|--quoting-style*|--width*) shift;continue;;
         -g) FLAGS+=(g);shift;continue;;
         -G|--no-group) FLAGS+=(G);shift;continue;;
         -o) FLAGS+=(l G);shift;continue;;
