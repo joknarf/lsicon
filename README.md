@@ -44,7 +44,7 @@ Much faster than other "modern" tools (here /usr containing ~150000 files):
 
 ## Install
 
-You can use a plugin manager, like the famous [thefly](https://github.com/joknarf/thefly)
+You can use a plugin manager, like the famous [joknarf/thefly](https://github.com/joknarf/thefly)
 ```
 . <(curl https://raw.githubusercontent.com/joknarf/thefly/main/thefly) install
 fly add joknarf/lsicon
