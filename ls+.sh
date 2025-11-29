@@ -5,13 +5,15 @@
 #
 
 usage() {
-    printf "%s\n" "usage: ls+ [-T [-L maxlevel -P <pattern>]] [LSOPTION]... [FILE]...
+    printf "%s\n" "usage: ls+ [-T [-f -L maxlevel -P <pattern> --prune]] [LSOPTION]... [FILE]...
 ls+: ls/tree decorator
 ls+ takes same arguments as ls command
-Exception:
-    -T will display dir/files tree using tree command
-    -P <pattern> limit files matching pattern for tree view
-    -L <maxlevel> limit tree depth for tree view
+Exception :
+    -T|--tree will display dir/files tree using tree command
+        -P <pattern> limit files matching pattern for tree view
+        -L <maxlevel> limit tree depth for tree view
+        -f full file path in tree
+        --prune when -I or -P hide directories without matching entries
 
 To see ls help: \ls --help
 "
@@ -42,7 +44,8 @@ while [ "$1" ];do
         -o) FLAGS+=(l G);shift;continue;;
         -l|--format=long) FLAGS+=(l) ;;
         -Z|--context) FLAGS+=(Z) ;;
-        -t|-c|-U|-v|-r|-I|-P|-L|--prune) ARGSTREE+=("$1");;
+        -t|-c|-U|-v|-r|-I|-P|-L) ARGSTREE+=("$1");;
+        --prune|-f) ARGSTREE+=("$1");shift;continue;;
         -i|--inode) FLAGS+=(i);ARGSTREE+=(--inodes) ;;
         -h|--human-readable) ARGSTREE+=(-h);;
         -a|--all) ARGSTREE+=(-a);;
