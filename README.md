@@ -56,10 +56,19 @@ git clone https://github.com/joknarf/lsicon
 
 ## Usage
 
-The lsicon command `ls+` is used with exactly same options as GNU `ls`
+The lsicon command `ls+` is used with exactly same options as GNU `ls`, except the `-T` or `--tree` will display directory/files tree.
+
+Additional parameters for ls+ tree (`ls+ -T|--tree`):
+
+* `-P` <pattern> limit files matching pattern for tree view
+* `-L` <maxlevel> limit tree depth for tree view
+* `-f` full file path in tree
+* `--prune` when -I or -P hide directories without matching entries
+
 ```
 ls+
 ls+ -alrt
+ls+ -Talrt -P '*.py|*.css' --prune
 ...
 ```
 You may want to replace the `ls` command with ls+ using:
