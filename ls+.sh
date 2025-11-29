@@ -1,19 +1,18 @@
 #!/usr/bin/env bash
 # ls+ - enhanced ls with icons and colors
 # author: joknarf
-# usage: ls+ [ls options]
+# usage: ls+ [-T] [ls options]
 #
 
 usage() {
-    printf "%s\n" "usage: ls+ [-T [-f -L maxlevel -P <pattern> --prune]] [LSOPTION]... [FILE]...
+    printf "%s\n" "usage: ls+ [-T [TREEOPTION]...] [LSOPTION]... [FILE]... 
 ls+: ls/tree decorator
-ls+ takes same arguments as ls command
-Exception :
-    -T|--tree will display dir/files tree using tree command
-        -P <pattern> limit files matching pattern for tree view
-        -L <maxlevel> limit tree depth for tree view
-        -f full file path in tree
-        --prune when -I or -P hide directories without matching entries
+ls+ takes same arguments as ls command (with few limitations)
+Additional parameters for ls+ tree (ls+ -T|--tree):
+    -P <pattern> limit files matching pattern for tree view
+    -L <maxlevel> limit tree depth for tree view
+    -f full file path in tree
+    --prune when -I or -P hide directories without matching entries
 
 To see ls help: \ls --help
 "
