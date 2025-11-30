@@ -94,7 +94,6 @@ while [ "$1" ];do
             continue
         ;;
         [!-]*) ARGSTR+=("$1");;
-        --) break;
     esac
     ARGS+=("$1")
     shift
