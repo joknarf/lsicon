@@ -11,6 +11,7 @@ function unescape(s) {
 }
 function wildtore(p) {
     re = p
+    gsub(/\+/, "\\+", re)    # escape literal dots
     gsub(/\./, "\\.", re)    # escape literal dots
     gsub(/\*/, ".*", re)
     gsub(/\?/, ".", re)

@@ -9,11 +9,15 @@ usage() {
 ls+: ls/tree decorator
 ls+ takes same arguments as ls command (with few limitations)
 Additional parameters:
-    -P <pattern> limit files matching pattern
+    -P=<pattern> limit files matching pattern (eg. -P=*.py or -P='*.c|*.h')
+    -I=<patern> hide files matching pattern (eg. -I=*.tmp)
     --find=<pattern> display full path files matching pattern
     -L <maxlevel> limit tree depth for tree view (needs -T)
     -f full file path in tree (needs -T)
     --noprune when -I or -P show directories without matching entries (needs -T)
+Environment var:
+    LSI_HIDE_TREE=<pattern> : can be set to default hide dir/files matching pattern in tree
+    eg.: export LSI_HIDE_TREE='__pycache__|venv'
 
 To see ls help: \ls --help
 "
@@ -44,8 +48,10 @@ while [ "$1" ];do
         -o) FLAGS+=(l G);shift;continue;;
         -l|--format=long) FLAGS+=(l) ;;
         -Z|--context) FLAGS+=(Z) ;;
+        -P=*) PATTERN="${1#*=}";ARGSTREE+=(-P "$PATTERN");shift;continue;;
         -P) ARGSTREE+=("$1" "$2");FLAGS+=(P);PATTERN="$2";shift 2;continue;;
         -t|-c|-U|-v|-r|-L) ARGSTREE+=("$1");;
+        -I=*) PAT="${1#*=}";ARGS+=(-I "$PAT");ARGSTREE+=(-I "$PAT${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}");shift;continue;;
         -I) ARGS+=("$1" "$2");ARGSTREE+=("$1" "$2${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}");shift 2;continue;;
         --prune|-f) ARGSTREE+=("$1");shift;continue;;
         -i|--inode) FLAGS+=(i);ARGSTREE+=(--inodes) ;;
