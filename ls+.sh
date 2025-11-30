@@ -48,7 +48,7 @@ while [ "$1" ];do
         -o) FLAGS+=(l G);shift;continue;;
         -l|--format=long) FLAGS+=(l) ;;
         -Z|--context) FLAGS+=(Z) ;;
-        -P=*) PATTERN="${1#*=}";ARGSTREE+=(-P "$PATTERN");shift;continue;;
+        -P=*) PATTERN="${1#*=}";FLAGS+=(P);ARGSTREE+=(-P "$PATTERN");shift;continue;;
         -P) ARGSTREE+=("$1" "$2");FLAGS+=(P);PATTERN="$2";shift 2;continue;;
         -t|-c|-U|-v|-r|-L) ARGSTREE+=("$1");;
         -I=*) PAT="${1#*=}";ARGS+=(-I "$PAT");ARGSTREE+=(-I "$PAT${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}");shift;continue;;
