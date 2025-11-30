@@ -8,11 +8,12 @@ usage() {
     printf "%s\n" "usage: ls+ [-T [TREEOPTION]...] [LSOPTION]... [FILE]... 
 ls+: ls/tree decorator
 ls+ takes same arguments as ls command (with few limitations)
-Additional parameters for ls+ tree (ls+ -T|--tree):
-    -P <pattern> limit files matching pattern for tree view
-    -L <maxlevel> limit tree depth for tree view
-    -f full file path in tree
-    --prune when -I or -P hide directories without matching entries
+Additional parameters:
+    -P <pattern> limit files matching pattern
+    --find=<pattern> display full path files matching pattern
+    -L <maxlevel> limit tree depth for tree view (needs -T)
+    -f full file path in tree (needs -T)
+    --noprune when -I or -P show directories without matching entries (needs -T)
 
 To see ls help: \ls --help
 "
