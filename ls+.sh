@@ -30,7 +30,7 @@ USER_ID=$(id -un)
 COLOR=''
 ARGSLS=("$@")
 ARGS=("-lFQ" "--color" "--time-style=+%y-%m-%d %H:%M")
-ARGSTREE=(--prune -pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
+ARGSTR=(--prune -pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
 FLAGS=()
 TREE=false
 skip=false
@@ -48,41 +48,41 @@ while [ "$1" ];do
         -o) FLAGS+=(l G);shift;continue;;
         -l|--format=long) FLAGS+=(l) ;;
         -Z|--context) FLAGS+=(Z) ;;
-        -P=*) PATTERN="${1#*=}";FLAGS+=(P);ARGSTREE+=(-P "$PATTERN");shift;continue;;
-        -P) ARGSTREE+=("$1" "$2");FLAGS+=(P);PATTERN="$2";shift 2;continue;;
-        -t|-c|-U|-v|-r|-L) ARGSTREE+=("$1");;
-        -I=*) PAT="${1#*=}";ARGS+=(-I "$PAT");ARGSTREE+=(-I "$PAT${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}");shift;continue;;
-        -I) ARGS+=("$1" "$2");ARGSTREE+=("$1" "$2${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}");shift 2;continue;;
-        --prune|-f) ARGSTREE+=("$1");shift;continue;;
-        -i|--inode) FLAGS+=(i);ARGSTREE+=(--inodes) ;;
-        -h|--human-readable) ARGSTREE+=(-h);;
-        -a|--all) ARGSTREE+=(-a);;
-        -d|--directory) ARGSTREE+=(-d);;
-        --dereference-command-line-symlink-to-dir) ARGSTREE+=(-l);;
-        --group-directories-first) ARGSTREE+=(--dirsfirst);;
-        -S) ARGSTREE+=(--sort=size);;
-        --ignore=*|--hide=*) ARGSTREE+=(-I "${1#*=}");;
+        -P=*) PATTERN="${1#*=}";FLAGS+=(P);ARGSTR+=(-P "$PATTERN");shift;continue;;
+        -P) ARGSTR+=("$1" "$2");FLAGS+=(P);PATTERN="$2";shift 2;continue;;
+        -t|-c|-U|-v|-r|-L) ARGSTR+=("$1");;
+        -I=*) PAT="${1#*=}";ARGS+=(-I "$PAT");ARGSTR+=(-I "$PAT${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}");shift;continue;;
+        -I) ARGS+=("$1" "$2");ARGSTR+=("$1" "$2${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}");shift 2;continue;;
+        --prune|-f) ARGSTR+=("$1");shift;continue;;
+        -i|--inode) FLAGS+=(i);ARGSTR+=(--inodes) ;;
+        -h|--human-readable) ARGSTR+=(-h);;
+        -a|--all) ARGSTR+=(-a);;
+        -d|--directory) ARGSTR+=(-d);;
+        --dereference-command-line-symlink-to-dir) ARGSTR+=(-l);;
+        --group-directories-first) ARGSTR+=(--dirsfirst);;
+        -S) ARGSTR+=(--sort=size);;
+        --ignore=*|--hide=*) ARGSTR+=(-I "${1#*=}");;
         --sort=extension) ;;
-        --sort=*) ARGSTREE+=("$1");;
+        --sort=*) ARGSTR+=("$1");;
         -1|--format=single-column) FLAGS+=(1) ;;
         --format=*) shift;continue;;
         -s|--size) FLAGS+=(s) ;;
         -n|--numeric-uid-gid) USER_GROUPS=$(id -G); USER_ID=$(id -u);;
         -T|--tree) TREE=true;shift;continue ;;
-        -z|--zeroindent) ARGSTREE+=(-i);shift;continue;;
-        --find) TREE=true;ARGSTREE+=(--prune -ifP "$2");PATTERN="$2";FLAGS+=(P F);shift 2;continue;;
-        --find=*) TREE=true;PATTERN="${1#*=}";ARGSTREE+=(--prune -ifP "$PATTERN");FLAGS+=(P F);shift;continue;;
-        --noprune) unset ARGSTREE[0];;
+        -z|--zeroindent) ARGSTR+=(-i);shift;continue;;
+        --find) TREE=true;ARGSTR+=(--prune -ifP "$2");PATTERN="$2";FLAGS+=(P F);shift 2;continue;;
+        --find=*) TREE=true;PATTERN="${1#*=}";ARGSTR+=(--prune -ifP "$PATTERN");FLAGS+=(P F);shift;continue;;
+        --noprune) unset 'ARGSTR[0]';;
         -[!-]*)
             a="${1#-}"
-            [[ $a = *P ]] && { ARGSTREE+=(-P "$2"); PATTERN="$2"; FLAGS+=(P) ; a=${a%P};shift; }
-            [[ $a = *I ]] && { ARGSTREE+=(-I "$2${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}"); ARGS+=$(-I "$2");a=${a%I};shift; }
+            [[ $a = *P ]] && { ARGSTR+=(-P "$2"); PATTERN="$2"; FLAGS+=(P) ; a=${a%P};shift; }
+            [[ $a = *I ]] && { ARGSTR+=(-I "$2${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}"); ARGS+=$(-I "$2");a=${a%I};shift; }
             while [ "$a" ];do
                 i="${a:0:1}"
                 case "$i" in
-                a|d|h|t|c|U|v|r|I|P|L|z) ARGSTREE+=(-$i);;
-                i) ARGSTREE+=(--inodes);;
-                S) ARGSTREE+=(--sort=size);;
+                a|d|h|t|c|U|v|r|L|z) ARGSTR+=(-$i);;
+                i) ARGSTR+=(--inodes);;
+                S) ARGSTR+=(--sort=size);;
                 n) USER_GROUPS=$(id -G); USER_ID=$(id -u);;
                 T) TREE=true;;
                 esac
@@ -93,19 +93,19 @@ while [ "$1" ];do
             shift
             continue
         ;;
-        [!-]*) ARGSTREE+=("$1");;
+        [!-]*) ARGSTR+=("$1");;
         --) break;
     esac
     ARGS+=("$1")
     shift
 done
-ARGS+=("$@");ARGSTREE+=("$@")
+ARGS+=("$@");ARGSTR+=("$@")
 # reversed tree -t
-$TREE && [ "$LSI_HIDE_TREE" ] && [[ " ${ARGSTREE[@]} " != *\ -I\ * ]] && ARGSTREE=(-I "$LSI_HIDE_TREE" "${ARGSTREE[@]}")
-$TREE && [[ " ${ARGSTREE[*]} " = *\ -t\ * ]] && {
-    [[ " ${ARGSTREE[*]} " = *\ -r\ * ]] && {
-        for ((i=0; i<${#ARGSTREE[@]}; i++));do [ "${ARGSTREE[i]}" = '-r' ] && unset 'ARGSTREE[i]';done
-    } || ARGSTREE=(-r "${ARGSTREE[@]}")
+$TREE && [ "$LSI_HIDE_TREE" ] && [[ " ${ARGSTR[@]} " != *\ -I\ * ]] && ARGSTR=(-I "$LSI_HIDE_TREE" "${ARGSTR[@]}")
+$TREE && [[ " ${ARGSTR[*]} " = *\ -t\ * ]] && {
+    [[ " ${ARGSTR[*]} " = *\ -r\ * ]] && {
+        for ((i=0; i<${#ARGSTR[@]}; i++));do [ "${ARGSTR[i]}" = '-r' ] && unset 'ARGSTR[i]';done
+    } || ARGSTR=(-r "${ARGSTR[@]}")
 }
 [ ! "$COLOR" ] && [ ! -t 1 ] && COLOR=false || COLOR=true
 ! $COLOR && ! $TREE && exec $ls "${ARGSLS[@]}"
@@ -118,13 +118,12 @@ LSI=$(readlink -f $0);LSI=${LSI%/*}
 : "${THEME_FILE:=$LSI/ls+.theme}"
 read _ TERM_COLS <<<$(stty size 2>/dev/null)
 : ${TERM_COLS:=80}
-# ls is missing an indicator for broken symlink, use color to get it
-
+# ls/tree is missing an indicator for broken symlink, use color to get it
 set -o pipefail
 if $TREE ;then
     export LS_COLORS="rs=0:di=0:ln=0:mh=0:pi=0:so=0:do=0:bd=0:cd=0:or=1:mi=0:su=0:sg=0:ca=0:tw=0:ow=0:st=0:ex=0:"
     export TREE_COLORS="$LS_COLORS"
-    tree "${ARGSTREE[@]}" |awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
+    tree "${ARGSTR[@]}" |awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
         -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -v PATTERN="$PATTERN" -f "$LSI/ls+.com.awk" -f "$LSI/ls+.tree.awk"
 else
     export LS_COLORS="rs=:di=:ln=:mh=:pi=:so=:do=:bd=:cd=:or=:mi=1:su=:sg=:ca=:tw=:ow=:st=:ex=:"
