@@ -56,7 +56,7 @@ is_flag() {
 get_args "$@"
 set -- "${args[@]}"
 
-is_flag '-T|--tree' && TREE=true
+is_flag '-T|--tree|--find' && TREE=true
 
 while [ "$1" ];do
     case "$1" in
@@ -96,8 +96,8 @@ while [ "$1" ];do
         -n|--numeric-uid-gid) USER_GROUPS=$(id -G); USER_ID=$(id -u);;
         -T|--tree) shift;continue ;;
         -z|--zeroindent) ARGSTR+=(-i);shift;continue;;
-        --find) TREE=true;ARGSTR+=(--prune -ifP "$2");PATTERN="$2";FLAGS+=(P F);shift 2;continue;;
-        --find=*) TREE=true;PATTERN="${1#*=}";ARGSTR+=(--prune -ifP "$PATTERN");FLAGS+=(P F);shift;continue;;
+        --find) ARGSTR+=(-ifP "$2");PATTERN="$2";FLAGS+=(P F);shift 2;continue;;
+        --find=*) PATTERN="${1#*=}";ARGSTR+=(-ifP "$PATTERN");FLAGS+=(P F);shift;continue;;
         --noprune) unset 'ARGSTR[0]';;
         [!-]*) ARGSTR+=("$1");;
     esac
