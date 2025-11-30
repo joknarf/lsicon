@@ -36,20 +36,27 @@ TREE=false
 skip=false
 get_args() {
     args=()
+    flags=()
     while [ "$1" ];do
       case "$1" in
       --) args+=("$@");break;;
-      --*) args+=("$1");;
-      -?) args+=("$1");;
-      -?=*) args+=("$1");;
-      -*) a="${1#-}"; while [ "$a" ] ;do args+=("-${a:0:1}"); a="${a:1}"; done;;
+      --*) args+=("$1");flags+=("$1");;
+      -?) args+=("$1");flags+=("$1");;
+      -?=*) args+=("$1");flags+=("${1:0:2}");;
+      -*) a="${1#-}"; while [ "$a" ] ;do args+=("-${a:0:1}"); flags+=("-${a:0:1}");a="${a:1}";done;;
       *) args+=("$1");;
       esac
       shift
     done
 }
+is_flag() {
+    re=" ($1) "
+    [[ " ${flags[@]} " =~ $re  ]]
+}
 get_args "$@"
 set -- "${args[@]}"
+
+is_flag '-T|--tree' && TREE=true
 
 while [ "$1" ];do
     case "$1" in
@@ -67,7 +74,9 @@ while [ "$1" ];do
         -Z|--context) FLAGS+=(Z) ;;
         -P=*) PATTERN="${1#*=}";FLAGS+=(P);ARGSTR+=(-P "$PATTERN");shift;continue;;
         -P) ARGSTR+=("$1" "$2");FLAGS+=(P);PATTERN="$2";shift 2;continue;;
-        -t|-c|-U|-v|-r|-L) ARGSTR+=("$1");;
+        -t|-c) ARGSTR+=("$1");$TREE && is_flag '-r' || ARGSTR+=('-r');;
+        -r) $TREE && is_flag '-t|-c' || ARGSTR+=('-r');;
+        -U|-v|-r|-L) ARGSTR+=("$1");;
         -I=*) PAT="${1#*=}";ARGS+=(-I "$PAT");ARGSTR+=(-I "$PAT${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}");shift;continue;;
         -I) ARGS+=("$1" "$2");ARGSTR+=("$1" "$2${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}");shift 2;continue;;
         --prune|-f) ARGSTR+=("$1");shift;continue;;
@@ -85,7 +94,7 @@ while [ "$1" ];do
         --format=*) shift;continue;;
         -s|--size) FLAGS+=(s) ;;
         -n|--numeric-uid-gid) USER_GROUPS=$(id -G); USER_ID=$(id -u);;
-        -T|--tree) TREE=true;shift;continue ;;
+        -T|--tree) shift;continue ;;
         -z|--zeroindent) ARGSTR+=(-i);shift;continue;;
         --find) TREE=true;ARGSTR+=(--prune -ifP "$2");PATTERN="$2";FLAGS+=(P F);shift 2;continue;;
         --find=*) TREE=true;PATTERN="${1#*=}";ARGSTR+=(--prune -ifP "$PATTERN");FLAGS+=(P F);shift;continue;;
@@ -96,13 +105,7 @@ while [ "$1" ];do
     shift
 done
 ARGS+=("$@");ARGSTR+=("$@")
-# reversed tree -t
-$TREE && [ "$LSI_HIDE_TREE" ] && [[ " ${ARGSTR[@]} " != *\ -I\ * ]] && ARGSTR=(-I "$LSI_HIDE_TREE" "${ARGSTR[@]}")
-$TREE && [[ " ${ARGSTR[*]} " = *\ -t\ * ]] && {
-    [[ " ${ARGSTR[*]} " = *\ -r\ * ]] && {
-        for ((i=0; i<${#ARGSTR[@]}; i++));do [ "${ARGSTR[i]}" = '-r' ] && unset 'ARGSTR[i]';done
-    } || ARGSTR=(-r "${ARGSTR[@]}")
-}
+$TREE && [ "$LSI_HIDE_TREE" ] && ! is_flag -I && ARGSTR=(-I "$LSI_HIDE_TREE" "${ARGSTR[@]}")
 [ ! "$COLOR" ] && [ ! -t 1 ] && COLOR=false || COLOR=true
 ! $COLOR && ! $TREE && exec $ls "${ARGSLS[@]}"
 [ -r ~/.config/ls+/icons ] && ICON_FILE=~/.config/ls+/icons
