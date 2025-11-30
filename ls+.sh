@@ -95,7 +95,7 @@ while [ "$1" ];do
 done
 ARGS+=("$@");ARGSTREE+=("$@")
 # reversed tree -t
-$TREE && [ "$LSI_HIDE_TREE" ] && [[ " ${ARGSTREE} " != *\ -I\ * ]] && ARGSTREE=(-I "$LSI_HIDE_TREE" "${ARGSTREE[@]}")
+$TREE && [ "$LSI_HIDE_TREE" ] && [[ " ${ARGSTREE[@]} " != *\ -I\ * ]] && ARGSTREE=(-I "$LSI_HIDE_TREE" "${ARGSTREE[@]}")
 $TREE && [[ " ${ARGSTREE[*]} " = *\ -t\ * ]] && {
     [[ " ${ARGSTREE[*]} " = *\ -r\ * ]] && {
         for ((i=0; i<${#ARGSTREE[@]}; i++));do [ "${ARGSTREE[i]}" = '-r' ] && unset 'ARGSTREE[i]';done
