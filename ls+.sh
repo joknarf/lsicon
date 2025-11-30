@@ -34,6 +34,23 @@ ARGSTR=(--prune -pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
 FLAGS=()
 TREE=false
 skip=false
+get_args() {
+    args=()
+    while [ "$1" ];do
+      case "$1" in
+      --) args+=("$@");break;;
+      --*) args+=("$1");;
+      -?) args+=("$1");;
+      -?=*) args+=("$1");;
+      -*) a="${1#-}"; while [ "$a" ] ;do args+=("-${a:0:1}"); a="${a:1}"; done;;
+      *) args+=("$1");;
+      esac
+      shift
+    done
+}
+get_args "$@"
+set -- "${args[@]}"
+
 while [ "$1" ];do
     case "$1" in
         --help|--version) usage "$1";;
@@ -73,26 +90,6 @@ while [ "$1" ];do
         --find) TREE=true;ARGSTR+=(--prune -ifP "$2");PATTERN="$2";FLAGS+=(P F);shift 2;continue;;
         --find=*) TREE=true;PATTERN="${1#*=}";ARGSTR+=(--prune -ifP "$PATTERN");FLAGS+=(P F);shift;continue;;
         --noprune) unset 'ARGSTR[0]';;
-        -[!-]*)
-            a="${1#-}"
-            [[ $a = *P ]] && { ARGSTR+=(-P "$2"); PATTERN="$2"; FLAGS+=(P) ; a=${a%P};shift; }
-            [[ $a = *I ]] && { ARGSTR+=(-I "$2${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}"); ARGS+=$(-I "$2");a=${a%I};shift; }
-            while [ "$a" ];do
-                i="${a:0:1}"
-                case "$i" in
-                a|d|h|t|c|U|v|r|L|z) ARGSTR+=(-$i);;
-                i) ARGSTR+=(--inodes);;
-                S) ARGSTR+=(--sort=size);;
-                n) USER_GROUPS=$(id -G); USER_ID=$(id -u);;
-                T) TREE=true;;
-                esac
-                [[ $i != [gGTPz] ]] && ARGS+=(-$i)
-                FLAGS+=("${a:0:1}")
-                a="${a:1}"
-            done
-            shift
-            continue
-        ;;
         [!-]*) ARGSTR+=("$1");;
     esac
     ARGS+=("$1")
