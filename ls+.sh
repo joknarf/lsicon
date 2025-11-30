@@ -25,7 +25,7 @@ USER_ID=$(id -un)
 COLOR=''
 ARGSLS=("$@")
 ARGS=("-lFQ" "--color" "--time-style=+%y-%m-%d %H:%M")
-ARGSTREE=(-pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
+ARGSTREE=(--prune -pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
 FLAGS=()
 TREE=false
 skip=false
@@ -65,6 +65,7 @@ while [ "$1" ];do
         -z|--zeroindent) ARGSTREE+=(-i);shift;continue;;
         --find) TREE=true;ARGSTREE+=(--prune -ifP "$2");PATTERN="$2";FLAGS+=(P F);shift 2;continue;;
         --find=*) TREE=true;PATTERN="${1#*=}";ARGSTREE+=(--prune -ifP "$PATTERN");FLAGS+=(P F);shift;continue;;
+        --noprune) unset ARGSTREE[0];;
         -[!-]*)
             a="${1#-}"
             [[ $a = *P ]] && { ARGSTREE+=(-P "$2"); PATTERN="$2"; FLAGS+=(P) ; a=${a%P};shift; }
