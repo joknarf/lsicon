@@ -44,7 +44,8 @@ while [ "$1" ];do
         -l|--format=long) FLAGS+=(l) ;;
         -Z|--context) FLAGS+=(Z) ;;
         -P) ARGSTREE+=("$1" "$2");FLAGS+=(P);PATTERN="$2";shift 2;continue;;
-        -t|-c|-U|-v|-r|-I|-L) ARGSTREE+=("$1");;
+        -t|-c|-U|-v|-r|-L) ARGSTREE+=("$1");;
+        -I) ARGS+=("$1" "$2");ARGSTREE+=("$1" "$2${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}");shift 2;continue;;
         --prune|-f) ARGSTREE+=("$1");shift;continue;;
         -i|--inode) FLAGS+=(i);ARGSTREE+=(--inodes) ;;
         -h|--human-readable) ARGSTREE+=(-h);;
@@ -62,11 +63,12 @@ while [ "$1" ];do
         -n|--numeric-uid-gid) USER_GROUPS=$(id -G); USER_ID=$(id -u);;
         -T|--tree) TREE=true;shift;continue ;;
         -z|--zeroindent) ARGSTREE+=(-i);shift;continue;;
-        --find) TREE=true;ARGSTREE+=(--prune -ifP "$2");PATTERN="$2";FLAGS+=(P);shift 2;continue;;
-        --find=*) TREE=true;PATTERN="${1#*=}";ARGSTREE+=(--prune -ifP "$PATTERN");FLAGS+=(P);shift;continue;;
+        --find) TREE=true;ARGSTREE+=(--prune -ifP "$2");PATTERN="$2";FLAGS+=(P F);shift 2;continue;;
+        --find=*) TREE=true;PATTERN="${1#*=}";ARGSTREE+=(--prune -ifP "$PATTERN");FLAGS+=(P F);shift;continue;;
         -[!-]*)
             a="${1#-}"
             [[ $a = *P ]] && { ARGSTREE+=(-P "$2"); PATTERN="$2"; FLAGS+=(P) ; a=${a%P};shift; }
+            [[ $a = *I ]] && { ARGSTREE+=(-I "$2${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}"); ARGS+=$(-I "$2");a=${a%I};shift; }
             while [ "$a" ];do
                 i="${a:0:1}"
                 case "$i" in
@@ -91,6 +93,7 @@ while [ "$1" ];do
 done
 ARGS+=("$@");ARGSTREE+=("$@")
 # reversed tree -t
+$TREE && [ "$LSI_HIDE_TREE" ] && [[ " ${ARGSTREE} " != *\ -I\ * ]] && ARGSTREE=(-I "$LSI_HIDE_TREE" "${ARGSTREE[@]}")
 $TREE && [[ " ${ARGSTREE[*]} " = *\ -t\ * ]] && {
     [[ " ${ARGSTREE[*]} " = *\ -r\ * ]] && {
         for ((i=0; i<${#ARGSTREE[@]}; i++));do [ "${ARGSTREE[i]}" = '-r' ] && unset 'ARGSTREE[i]';done

@@ -31,6 +31,7 @@ function init_theme() {
   flag_G=("G" in flags)
   flag_1=("1" in flags)
   flag_P=("P" in flags)
+  flag_F=("F" in flags) #find
   if(flag_P) repat=wildtore(PATTERN)
   while ((getline < iconfile) > 0)
     for(i=2;i<=NF;i++) I_EXT[$i]=$1
