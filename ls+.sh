@@ -56,7 +56,10 @@ is_flag() {
 get_args "$@"
 set -- "${args[@]}"
 is_flag '-T|--tree|--find' && TREE=true
-$TREE && ! is_flag --noprune && ARGSTR+=(--prune)
+$TREE && {
+    ! is_flag --noprune && ARGSTR+=(--prune)
+    [ "$LSI_HIDE_TREE" ] && ! is_flag -I && ARGSTR+=(-I "$LSI_HIDE_TREE")
+}
 
 while [ "$1" ];do
     case "$1" in
@@ -101,7 +104,6 @@ while [ "$1" ];do
     shift
 done
 ARGS+=("$@");ARGSTR+=("$@")
-$TREE && [ "$LSI_HIDE_TREE" ] && ! is_flag -I && ARGSTR=(-I "$LSI_HIDE_TREE" "${ARGSTR[@]}")
 [ ! "$COLOR" ] && [ ! -t 1 ] && COLOR=false || COLOR=true
 ! $COLOR && ! $TREE && exec $ls "${ARGSLS[@]}"
 [ -r ~/.config/ls+/icons ] && ICON_FILE=~/.config/ls+/icons
