@@ -30,7 +30,7 @@ USER_ID=$(id -un)
 COLOR=''
 ARGSLS=("$@")
 ARGS=("-lFQ" "--color" "--time-style=+%y-%m-%d %H:%M")
-ARGSTR=(--prune -pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
+ARGSTR=(-pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
 FLAGS=()
 TREE=false
 skip=false
@@ -55,8 +55,8 @@ is_flag() {
 }
 get_args "$@"
 set -- "${args[@]}"
-
 is_flag '-T|--tree|--find' && TREE=true
+$TREE && ! is_flag --noprune && ARGSTR+=(--prune)
 
 while [ "$1" ];do
     case "$1" in
@@ -95,7 +95,6 @@ while [ "$1" ];do
         -T|--tree) shift;continue ;;
         -z|--zeroindent) ARGSTR+=(-i);shift;continue;;
         --find=*) PATTERN="${1#*=}";ARGSTR+=(-ifP "$PATTERN");FLAGS+=(P F);shift;continue;;
-        --noprune) unset 'ARGSTR[0]';;
         [!-]*) ARGSTR+=("$1");;
     esac
     ARGS+=("$1")
