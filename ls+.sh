@@ -9,8 +9,8 @@ usage() {
 ls+: ls/tree decorator
 ls+ takes same arguments as ls command (with few limitations)
 Additional parameters:
-    -P=<pattern> limit files matching pattern (eg. -P=*.py or -P='*.c|*.h')
-    -I=<patern> hide files matching pattern (eg. -I=*.tmp)
+    --P=<pattern> limit files matching pattern (eg. --P=*.py or --P='*.c|*.h')
+    --I=<patern> hide files matching pattern (eg. --I=*.tmp)
     --find=<pattern> display full path files matching pattern
     -L <maxlevel> limit tree depth for tree view (needs -T)
     -f full file path in tree (needs -T)
@@ -40,9 +40,9 @@ get_args() {
     while [ "$1" ];do
       case "$1" in
       --) args+=("$@");break;;
+      --?=*) args+=("${1:1:2}" "${1:4}");;
       --*) args+=("$1");flags+=("${1%%=*}");;
       -?) args+=("$1");flags+=("$1");;
-      -?=*) args+=("${1%%=*}" "${1#*=}");flags+=("${1%%=*}");;
       -*) a="${1#-}"; while [ "$a" ] ;do args+=("-${a:0:1}"); flags+=("-${a:0:1}");a="${a:1}";done;;
       *) args+=("$1");;
       esac
