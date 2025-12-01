@@ -77,7 +77,7 @@ while [ "$1" ];do
         -r) $TREE && is_flag '-t|-c' || ARGSTR+=('-r');;
         -U|-v|-r|-L) ARGSTR+=("$1");;
         -I) ARGS+=("$1" "$2");ARGSTR+=("$1" "$2${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}");shift 2;continue;;
-        --prune|-f) ARGSTR+=("$1");shift;continue;;
+        -f) ARGSTR+=("$1");shift;continue;;
         -i|--inode) FLAGS+=(i);ARGSTR+=(--inodes) ;;
         -h|--human-readable) ARGSTR+=(-h);;
         -a|--all) ARGSTR+=(-a);;
