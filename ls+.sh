@@ -94,7 +94,6 @@ while [ "$1" ];do
         -n|--numeric-uid-gid) USER_GROUPS=$(id -G); USER_ID=$(id -u);;
         -T|--tree) shift;continue ;;
         -z|--zeroindent) ARGSTR+=(-i);shift;continue;;
-        --find) ARGSTR+=(-ifP "$2");PATTERN="$2";FLAGS+=(P F);shift 2;continue;;
         --find=*) PATTERN="${1#*=}";ARGSTR+=(-ifP "$PATTERN");FLAGS+=(P F);shift;continue;;
         --noprune) unset 'ARGSTR[0]';;
         [!-]*) ARGSTR+=("$1");;
