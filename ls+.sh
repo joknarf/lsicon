@@ -40,9 +40,9 @@ get_args() {
     while [ "$1" ];do
       case "$1" in
       --) args+=("$@");break;;
-      --*) args+=("$1");flags+=("$1");;
+      --*) args+=("$1");flags+=("${1%%=*}");;
       -?) args+=("$1");flags+=("$1");;
-      -?=*) args+=("$1");flags+=("${1:0:2}");;
+      -?=*) args+=("${1%%=*}" "${1#*=}");flags+=("${1%%=*}");;
       -*) a="${1#-}"; while [ "$a" ] ;do args+=("-${a:0:1}"); flags+=("-${a:0:1}");a="${a:1}";done;;
       *) args+=("$1");;
       esac
@@ -72,12 +72,10 @@ while [ "$1" ];do
         -o) FLAGS+=(l G);shift;continue;;
         -l|--format=long) FLAGS+=(l) ;;
         -Z|--context) FLAGS+=(Z) ;;
-        -P=*) PATTERN="${1#*=}";FLAGS+=(P);ARGSTR+=(-P "$PATTERN");shift;continue;;
         -P) ARGSTR+=("$1" "$2");FLAGS+=(P);PATTERN="$2";shift 2;continue;;
         -t|-c) ARGSTR+=("$1");$TREE && is_flag '-r' || ARGSTR+=('-r');;
         -r) $TREE && is_flag '-t|-c' || ARGSTR+=('-r');;
         -U|-v|-r|-L) ARGSTR+=("$1");;
-        -I=*) PAT="${1#*=}";ARGS+=(-I "$PAT");ARGSTR+=(-I "$PAT${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}");shift;continue;;
         -I) ARGS+=("$1" "$2");ARGSTR+=("$1" "$2${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}");shift 2;continue;;
         --prune|-f) ARGSTR+=("$1");shift;continue;;
         -i|--inode) FLAGS+=(i);ARGSTR+=(--inodes) ;;
