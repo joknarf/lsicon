@@ -64,6 +64,15 @@ while [ "$1" ];do
     case "$1" in
         --help|--version) usage "$1";;
         --) break ;;
+        -T|--tree) shift;continue ;;
+        -l|--format=long) FLAGS+=(l) ;;
+        -1|--format=single-column) FLAGS+=(1) ;;
+        -t|-c) ARGSTR+=("$1");$TREE && ! is_flag '-r' && ARGSTR+=('-r');;
+        -r) $TREE && ! is_flag '-t|-c' && ARGSTR+=('-r');;
+        -h|--human-readable) ARGSTR+=(-h);;
+        -a|--all) ARGSTR+=(-a);;
+        -d|--directory) ARGSTR+=(-d);;
+        --format=*) shift;continue;;
         --color*always|--color|-C) COLOR=true; shift;continue ;;
         --color*never) COLOR=false; shift;continue ;;
         --color=*|-w|--width*|--zero|-b) shift;continue;;
@@ -72,20 +81,12 @@ while [ "$1" ];do
         -g) FLAGS+=(g);shift;continue;;
         -G|--no-group) FLAGS+=(G);shift;continue;;
         -o) FLAGS+=(l G);shift;continue;;
-        -l|--format=long) FLAGS+=(l) ;;
-        -1|--format=single-column) FLAGS+=(1) ;;
-        --format=*) shit;continue;;
         -Z|--context) FLAGS+=(Z) ;;
+        -U|-v|-L) ARGSTR+=("$1");;
         -P) ARGSTR+=("$1" "$2");FLAGS+=(P);PATTERN="$2";shift 2;continue;;
-        -t|-c) ARGSTR+=("$1");$TREE && ! is_flag '-r' && ARGSTR+=('-r');;
-        -r) $TREE && ! is_flag '-t|-c' && ARGSTR+=('-r');;
-        -U|-v|-r|-L) ARGSTR+=("$1");;
         -I) ARGS+=("$1" "$2");ARGSTR+=("$1" "$2${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}");shift 2;continue;;
         -f|--prune) ARGSTR+=("$1");shift;continue;;
         -i|--inode) FLAGS+=(i);ARGSTR+=(--inodes) ;;
-        -h|--human-readable) ARGSTR+=(-h);;
-        -a|--all) ARGSTR+=(-a);;
-        -d|--directory) ARGSTR+=(-d);;
         --dereference-command-line-symlink-to-dir) ARGSTR+=(-l);;
         --group-directories-first) ARGSTR+=(--dirsfirst);;
         -S) ARGSTR+=(--sort=size);;
@@ -93,7 +94,6 @@ while [ "$1" ];do
         --sort=!(extension)) ARGSTR+=("$1");;
         -s|--size) FLAGS+=(s) ;;
         -n|--numeric-uid-gid) $TREE || { USER_GROUPS=$(id -G); USER_ID=$(id -u); };;
-        -T|--tree) shift;continue ;;
         -z|--zeroindent) ARGSTR+=(-i);shift;continue;;
         --find=*) PATTERN="${1#*=}";ARGSTR+=(-ifP "$PATTERN");FLAGS+=(P F);shift;continue;;
         [!-]*) ARGSTR+=("$1");;
