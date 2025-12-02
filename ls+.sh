@@ -33,17 +33,16 @@ ARGS=("-lFQ" "--color" "--time-style=+%y-%m-%d %H:%M")
 ARGSTR=(-pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
 FLAGS=()
 TREE=false
-skip=false
 get_args() {
     args=()
-    flags=()
+    _flags=()
     while [ "$1" ];do
       case "$1" in
       --) args+=("$@");break;;
-      --?=*) args+=("${1:1:2}" "${1:4}");;
-      --*) args+=("$1");flags+=("${1%%=*}");;
-      -?) args+=("$1");flags+=("$1");;
-      -*) a="${1#-}"; while [ "$a" ] ;do args+=("-${a:0:1}"); flags+=("-${a:0:1}");a="${a:1}";done;;
+      --?=*) args+=("${1:1:2}" "${1:4}");_flags+=("${1:1:2}");;
+      --*) args+=("$1");_flags+=("${1%%=*}");;
+      -?) args+=("$1");_flags+=("$1");;
+      -*) a="${1#-}"; while [ "$a" ] ;do args+=("-${a:0:1}"); _flags+=("-${a:0:1}");a="${a:1}";done;;
       *) args+=("$1");;
       esac
       shift
@@ -51,16 +50,16 @@ get_args() {
 }
 is_flag() {
     re=" ($1) "
-    [[ " ${flags[@]} " =~ $re  ]]
+    [[ " ${_flags[@]} " =~ $re  ]]
 }
 get_args "$@"
 set -- "${args[@]}"
-is_flag '-T|--tree|--find' && TREE=true
-$TREE && {
-    ! is_flag --noprune && ARGSTR+=(--prune)
+is_flag '-T|--tree|--find' && {
+    TREE=true
+    is_flag -P && ! is_flag --noprune && ARGSTR+=(--prune)
     [ "$LSI_HIDE_TREE" ] && ! is_flag -I && ARGSTR+=(-I "$LSI_HIDE_TREE")
 }
-
+shopt -s extglob
 while [ "$1" ];do
     case "$1" in
         --help|--version) usage "$1";;
@@ -74,13 +73,15 @@ while [ "$1" ];do
         -G|--no-group) FLAGS+=(G);shift;continue;;
         -o) FLAGS+=(l G);shift;continue;;
         -l|--format=long) FLAGS+=(l) ;;
+        -1|--format=single-column) FLAGS+=(1) ;;
+        --format=*) shit;continue;;
         -Z|--context) FLAGS+=(Z) ;;
         -P) ARGSTR+=("$1" "$2");FLAGS+=(P);PATTERN="$2";shift 2;continue;;
-        -t|-c) ARGSTR+=("$1");$TREE && is_flag '-r' || ARGSTR+=('-r');;
-        -r) $TREE && is_flag '-t|-c' || ARGSTR+=('-r');;
+        -t|-c) ARGSTR+=("$1");$TREE && ! is_flag '-r' && ARGSTR+=('-r');;
+        -r) $TREE && ! is_flag '-t|-c' && ARGSTR+=('-r');;
         -U|-v|-r|-L) ARGSTR+=("$1");;
         -I) ARGS+=("$1" "$2");ARGSTR+=("$1" "$2${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}");shift 2;continue;;
-        -f) ARGSTR+=("$1");shift;continue;;
+        -f|--prune) ARGSTR+=("$1");shift;continue;;
         -i|--inode) FLAGS+=(i);ARGSTR+=(--inodes) ;;
         -h|--human-readable) ARGSTR+=(-h);;
         -a|--all) ARGSTR+=(-a);;
@@ -89,12 +90,9 @@ while [ "$1" ];do
         --group-directories-first) ARGSTR+=(--dirsfirst);;
         -S) ARGSTR+=(--sort=size);;
         --ignore=*|--hide=*) ARGSTR+=(-I "${1#*=}");;
-        --sort=extension) ;;
-        --sort=*) ARGSTR+=("$1");;
-        -1|--format=single-column) FLAGS+=(1) ;;
-        --format=*) shift;continue;;
+        --sort=!(extension)) ARGSTR+=("$1");;
         -s|--size) FLAGS+=(s) ;;
-        -n|--numeric-uid-gid) USER_GROUPS=$(id -G); USER_ID=$(id -u);;
+        -n|--numeric-uid-gid) $TREE || { USER_GROUPS=$(id -G); USER_ID=$(id -u); };;
         -T|--tree) shift;continue ;;
         -z|--zeroindent) ARGSTR+=(-i);shift;continue;;
         --find=*) PATTERN="${1#*=}";ARGSTR+=(-ifP "$PATTERN");FLAGS+=(P F);shift;continue;;
