@@ -133,7 +133,7 @@ $0=="" { print_ls(); print ""; next }
   if (n==1 || vlen < minw) minw=vlen
   display_name=fname
   if (flag_l) {
-    if (target) display_name=display_name " -> " colors[c_link] target
+    if (target) display_name=display_name " -> " ESC"?7l" colors[c_link] target ESC"?7h"
     if (length(inum)>max_inums) max_inums=length(inum)
     #if (length(links)>max_links) max_links=length(links)
     if (length(owner)>max_owner) max_owner=length(owner)

@@ -94,7 +94,7 @@ $0=="" { next }
   if (fname ~ /^\./) c_fname=colors[col]
   else c_fname=colors["l"col]
   display_name=fname
-  if (target) display_name=display_name " -> " colors[c_link] target
+  if (target) display_name=display_name " -> " ESC"?7l" colors[c_link] target ESC"?7h"
   fname=c_tree prefix c_fname icon " " display_name suffix RESET
   if (length(inum)>max_inums) max_inums=length(inum)
   #if (length(links)>max_links) max_links=length(links)
