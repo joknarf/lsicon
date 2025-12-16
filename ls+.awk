@@ -127,13 +127,13 @@ $0=="" { print_ls(); print ""; next }
   }
   ++n
   vlen=length(fname)+2
-  lcol=colors["l"col]
+  if (fname ~ /^\./) c_fname = colors[col]
+  else c_fname=colors["l"col]
   if (vlen>maxw) maxw=vlen
   if (n==1 || vlen < minw) minw=vlen
+  display_name=fname
   if (flag_l) {
-    display_name=fname
     if (target) display_name=display_name " -> " colors[c_link] target
-    fname=lcol icon " " display_name RESET
     if (length(inum)>max_inums) max_inums=length(inum)
     #if (length(links)>max_links) max_links=length(links)
     if (length(owner)>max_owner) max_owner=length(owner)
@@ -143,10 +143,9 @@ $0=="" { print_ls(); print ""; next }
     if (length(context)>max_context) max_context=length(context)
     inums_a[n]=inum; perms_a[n]=perms;  owner_a[n]=owner; group_a[n]=group; size_a[n]=size;
     date_a[n]=date; context_a[n]=context; sizeb_a[n]=sizeb; #links_a[n]=links;
-  } else {
-    if (missing) lcol=colors[C_IND["?"] "_bg"]
-    fname=lcol icon " " fname RESET
-  }
+  } else
+    if (missing) c_fname=colors[C_IND["?"] "_bg"]
+  fname=c_fname icon " " display_name RESET
   name_a[n]=fname; vlen_a[n]=vlen; cols_a[n]=col
 }
 END {
