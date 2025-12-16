@@ -67,8 +67,8 @@ while [ "$1" ];do
         -T|--tree) shift;continue ;;
         -l|--format=long) FLAGS+=(l) ;;
         -1|--format=single-column) FLAGS+=(1) ;;
-        -t|-c) ARGSTR+=("$1");$TREE && ! is_flag '-r' && ARGSTR+=('-r');;
-        -r) $TREE && ! is_flag '-t|-c' && ARGSTR+=('-r');;
+        -t|-c) ARGSTR+=("$1");$TREE && ! is_flag -r && ARGSTR+=(-r);;
+        -r) $TREE && ! is_flag '-t|-c' && ARGSTR+=(-r);;
         -h|--human-readable) ARGSTR+=(-h);;
         -a|--all) ARGSTR+=(-a);;
         -d|--directory) ARGSTR+=(-d);;
@@ -91,7 +91,9 @@ while [ "$1" ];do
         --group-directories-first) ARGSTR+=(--dirsfirst);;
         -S) ARGSTR+=(--sort=size);;
         --ignore=*|--hide=*) ARGSTR+=(-I "${1#*=}");;
-        --sort=!(extension)) ARGSTR+=("$1");;
+        --sort=time) ARGSTR+=(-t);_flags+=(-t);! is_flag -r && ARGSTR+=(-r);;
+        --sort=none) ARGSTR+=(-U);;
+        --sort=!(extension|width)) ARGSTR+=("$1");;
         -s|--size) FLAGS+=(s) ;;
         -n|--numeric-uid-gid) $TREE || { USER_GROUPS=$(id -G); USER_ID=$(id -u); };;
         -z|--zeroindent) ARGSTR+=(-i);shift;continue;;
