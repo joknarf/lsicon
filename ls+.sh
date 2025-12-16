@@ -82,7 +82,7 @@ while [ "$1" ];do
         -G|--no-group) FLAGS+=(G);shift;continue;;
         -o) FLAGS+=(l G);shift;continue;;
         -Z|--context) FLAGS+=(Z) ;;
-        -U|-v|-L) ARGSTR+=("$1");;
+        -U|-v|-L|--si) ARGSTR+=("$1");;
         -P) ARGSTR+=("$1" "$2");FLAGS+=(P);PATTERN="$2";shift 2;continue;;
         -I) ARGS+=("$1" "$2");ARGSTR+=("$1" "$2${LSI_HIDE_TREE:+|$LSI_HIDE_TREE}");shift 2;continue;;
         -f|--prune) ARGSTR+=("$1");shift;continue;;
