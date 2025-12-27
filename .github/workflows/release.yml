@@ -179,8 +179,8 @@ jobs:
 
       - name: Set up package files
         run: |
-          mkdir -p pkg/usr/share/$TOOL pkg/usr/local/bin
-          cp ls+.* pkg/usr/share/$TOOL/
+          mkdir -p pkg/usr/local/share/$TOOL pkg/usr/local/bin
+          cp ls+.* pkg/usr/local/share/$TOOL/
           ln -s ../share/$TOOL/ls+.sh pkg/usr/local/bin/ls+
 
       - name: Build PKG
