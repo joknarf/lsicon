@@ -41,6 +41,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Set up package files
+        run: |
           mkdir -p pkg/share/$TOOL pkg/bin
           cp ls+.* pkg/share/$TOOL/
           ln -s ../share/$TOOL/ls+.sh pkg/bin/ls+
@@ -148,10 +149,10 @@ jobs:
           gem install --no-document fpm
 
       - name: Set up package files
+        run: |
           mkdir -p pkg/share/$TOOL pkg/bin
           cp ls+.* pkg/share/$TOOL/
           ln -s ../share/$TOOL/ls+.sh pkg/bin/ls+
-
 
       - name: Build APK
         run: |
@@ -177,6 +178,7 @@ jobs:
           sudo gem install --no-document fpm
 
       - name: Set up package files
+        run: |
           mkdir -p pkg/usr/share/$TOOL pkg/usr/local/bin
           cp ls+.* pkg/usr/share/$TOOL/
           ln -s ../share/$TOOL/ls+.sh pkg/usr/local/bin/ls+
