@@ -50,7 +50,7 @@ jobs:
       - name: Build DEB
         run: |
           BUILD_EPOCH=$(date +%s)
-          fpm $FPM_BASE -t deb --prefix=/usr --description="$DESC" --deb-field "Build-Date:$BUILD_EPOCH" -C pkg
+          fpm $FPM_BASE -t deb --prefix=/usr --description="$DESC" -d gawk --deb-field "Build-Date:$BUILD_EPOCH" -C pkg
           ln -s ${TOOL}_${VERSION}_all.deb $TOOL.deb
 
       - name: Checkout deb
