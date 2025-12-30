@@ -46,10 +46,11 @@ $0=="" { next }
 }
 {
   c=1
-  match($0, /^(.*)\[(.*)\] (.*)$/, m)
-  prefix=m[1]
-  $0 = m[2]
-  file_i = m[3]
+  if (match($0, /\[[^]]*\] /)) {
+    prefix = substr($0, 1, RSTART - 1)
+    file_i = substr($0, RSTART + RLENGTH)
+    $0     = substr($0, RSTART + 1, RLENGTH - 3)
+  }
   if (flag_i) inum=$(c++)
   perms=$(c++); owner=$(c++); group=$(c++);
   type=substr(perms,1,1)
@@ -57,17 +58,17 @@ $0=="" { next }
   else size=$(c++)
   date=$(c++) " " $c
   suffix=""
-  if (match(file_i,/(.*)( +\[error opening.*\])/, m1)) {
-    file_i=m1[1]
-    suffix=colors["lred"] m1[2]
+  if (match(file_i, / +\[error opening.*\]$/)) {
+    suffix = colors["lred"] substr(file_i,RSTART,RLENGTH)
+    file_i = substr(file_i,1, RSTART-1)
   }
   indicator=substr(file_i,length(file_i))
   if (indicator!="\"") file_i=substr(file_i, 1, length(file_i)-1)
   file_i=substr(file_i,index(file_i,"\""))
   if (type=="l") {
     c_link=C_TYPE["-"]
-    match(file_i, /^"(([^"\\]|\\.)*)"/, m1)
-    fname=m1[1]
+    if (match(file_i, /^"([^"\\]|\\.)*"/))
+      fname = substr(file_i,RSTART+1,RLENGTH-2)
     b=length(fname)+8 # "fname" -> " 
     target=unescape(substr(file_i,b,length(file_i)-b))
     if (missing) c_link=C_IND["?"] "_bg"
@@ -78,9 +79,9 @@ $0=="" { next }
     target=""
   }
   fname=unescape(fname)
-  if(flag_F && gensub(/^.*\//,"",1,fname) !~ repat) next
+  if(flag_F && fname !~ repat) next
   ext=""
-  if (match(fname, /\.[^.]+$/, ex)) ext=tolower(ex[0])
+  if (match(fname, /\.[^.]+$/)) ext=substr(fname,RSTART,RLENGTH)
   col=C_TYPE[type]
   icon=I_TYPE[type]
   if (type=="-") {

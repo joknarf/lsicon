@@ -101,8 +101,8 @@ $0=="" { print_ls(); print ""; next }
   if (indicator!="\"") file_i=substr(file_i, 1, length(file_i)-1)
   if (type=="l") {
     c_link=C_TYPE["-"]
-    match(file_i, /^"(([^"\\]|\\.)*)"/, m1)
-    fname=m1[1]
+    match(file_i, /^"(([^"\\]|\\.)*)"/)
+    fname=substr(file_i, RSTART + 1, RLENGTH - 2)
     b=length(fname)+8 # "fname" -> " 
     if (flag_l) target=unescape(substr(file_i,b,length(file_i)-b))
     if (missing) c_link=C_IND["?"] "_bg"
@@ -113,9 +113,9 @@ $0=="" { print_ls(); print ""; next }
     target=""
   }
   fname=unescape(fname)
-  if(flag_P && gensub(/^.*\//,"",1,fname) !~ repat) next
+  if(flag_P && fname !~ repat) next
   ext=""
-  if (match(fname, /\.[^.]+$/, ex)) ext=tolower(ex[0])
+  if (match(fname, /\.[^.]+$/)) ext=substr(fname,RSTART,RLENGTH)
   col=C_TYPE[type]
   icon=I_TYPE[type]
   if (type=="-") {

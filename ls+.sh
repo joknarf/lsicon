@@ -24,7 +24,8 @@ To see ls help: \ls --help
     exit 0
 }
 type gls >/dev/null 2>&1 && ls="gls" || ls="ls"
-type gawk >/dev/null 2>&1 && awk="gawk" || awk="awk"
+type gawk >/dev/null 2>&1 && awk="gawk"
+type mawk >/dev/null 2>&1 && awk="mawk" || awk="awk"
 USER_GROUPS=$(id -Gn)
 USER_ID=$(id -un)
 COLOR=''
@@ -120,10 +121,10 @@ set -o pipefail
 if $TREE ;then
     export LS_COLORS="rs=0:di=0:ln=0:mh=0:pi=0:so=0:do=0:bd=0:cd=0:or=1:mi=0:su=0:sg=0:ca=0:tw=0:ow=0:st=0:ex=0:"
     export TREE_COLORS="$LS_COLORS"
-    tree "${ARGSTR[@]}" |awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
+    tree "${ARGSTR[@]}" |$awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
         -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -v PATTERN="$PATTERN" -f "$LSI/ls+.com.awk" -f "$LSI/ls+.tree.awk"
 else
     export LS_COLORS="rs=:di=:ln=:mh=:pi=:so=:do=:bd=:cd=:or=:mi=1:su=:sg=:ca=:tw=:ow=:st=:ex=:"
-    $ls -1 "${ARGS[@]}" 2>&1 | awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
+    $ls -1 "${ARGS[@]}" 2>&1 | $awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
         -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -v PATTERN="$PATTERN" -f "$LSI/ls+.com.awk" -f "$LSI/ls+.awk"
 fi

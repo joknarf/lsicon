@@ -5,17 +5,20 @@ function fglcol(num) {
   return ESC num+60 "m"
 }
 function unescape(s) {
-  if (s ~ /\\\\/) { s=gensub(/\\([^\\])/, "\\1", "g", fname); gsub(/\\\\/,"\\",s) }
-  else gsub(/\\/,"",s)
+  if (s ~ /\\\\/) {
+    gsub(/\\\\/, "\034", s)
+    gsub(/\\/, "", s)
+    gsub(/\034/, "\\", s)
+  } else gsub(/\\/,"",s)
   return s
 }
 function wildtore(p) {
     re = p
     gsub(/\+/, "\\+", re)    # escape literal dots
     gsub(/\./, "\\.", re)    # escape literal dots
-    gsub(/\*/, ".*", re)
-    gsub(/\?/, ".", re)
-    return "^"re"$"
+    gsub(/\*/, "[^/]*", re)
+    gsub(/\?/, "[^/]", re)
+    return "(^|/)"re"$"
 }
 
 function init_theme() {
