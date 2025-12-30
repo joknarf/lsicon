@@ -36,8 +36,8 @@ Much faster than other "modern" tools (here /usr containing ~150000 files):
 
 * GNU ls
   * on BSD/MacOS/Alpine coreutils package needed
-* GNU awk
-  * on BSD/MacOS/Alpine gawk package needed
+* GNU awk or mawk
+  * on BSD/MacOS/Alpine gawk or mawk package needed
 * tree >= 1.6.0 (for tree view only)
 * bash
 * Nerd Font in your Terminal
