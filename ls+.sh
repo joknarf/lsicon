@@ -24,8 +24,9 @@ To see ls help: \ls --help
     exit 0
 }
 type gls >/dev/null 2>&1 && ls="gls" || ls="ls"
+awk=awk
 type gawk >/dev/null 2>&1 && awk="gawk"
-type mawk >/dev/null 2>&1 && awk="mawk" || awk="awk"
+type mawk >/dev/null 2>&1 && awk="mawk"
 USER_GROUPS=$(id -Gn)
 USER_ID=$(id -un)
 COLOR=''
