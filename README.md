@@ -50,6 +50,32 @@ You can use a plugin manager, like the famous [joknarf/thefly](https://github.co
 . <(curl https://raw.githubusercontent.com/joknarf/thefly/main/thefly) install
 fly add joknarf/lsicon
 ```
+
+or Use your prefered method according to your OS:
+
+```
+brew install joknarf/tools/lsicon
+```
+
+```
+sudo dnf install https://github.com/joknarf/neonfiglet/releases/latest/download/lsicon.rpm
+```
+
+```
+curl -OL https://github.com/joknarf/neonfiglet/releases/latest/download/lsicon.deb
+sudo dpkg -i lsicon.deb
+```
+
+```
+curl -OL https://github.com/joknarf/neonfiglet/releases/latest/download/lsicon.apk
+sudo apk add --allow-untrusted lsicon.apk
+```
+
+```
+curl -OL https://github.com/joknarf/neonfiglet/releases/latest/download/lsicon.pkg
+sudo installer -pkg lsicon.pkg -target /
+```
+
 or just clone the repo, and put `ls+*` files in dir in your PATH, or just create a link to `ls+`
 ```
 git clone https://github.com/joknarf/lsicon
