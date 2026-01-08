@@ -58,21 +58,21 @@ brew install joknarf/tools/lsicon
 ```
 
 ```
-sudo dnf install https://github.com/joknarf/neonfiglet/releases/latest/download/lsicon.rpm
+sudo dnf install https://github.com/joknarf/lsicon/releases/latest/download/lsicon.rpm
 ```
 
 ```
-curl -OL https://github.com/joknarf/neonfiglet/releases/latest/download/lsicon.deb
+curl -OL https://github.com/joknarf/lsicon/releases/latest/download/lsicon.deb
 sudo dpkg -i lsicon.deb
 ```
 
 ```
-curl -OL https://github.com/joknarf/neonfiglet/releases/latest/download/lsicon.apk
+curl -OL https://github.com/joknarf/lsicon/releases/latest/download/lsicon.apk
 sudo apk add --allow-untrusted lsicon.apk
 ```
 
 ```
-curl -OL https://github.com/joknarf/neonfiglet/releases/latest/download/lsicon.pkg
+curl -OL https://github.com/joknarf/lsicon/releases/latest/download/lsicon.pkg
 sudo installer -pkg lsicon.pkg -target /
 ```
 
