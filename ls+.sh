@@ -27,8 +27,8 @@ type gls >/dev/null 2>&1 && ls="gls" || ls="ls"
 awk=awk
 type gawk >/dev/null 2>&1 && awk="gawk"
 type mawk >/dev/null 2>&1 && awk="mawk"
-USER_GROUPS=$(id -Gn)
-USER_ID=$(id -un)
+USER_GROUPS=$(id -Gn 2>/dev/null)
+USER_ID=$(id -un 2>/dev/null)
 COLOR=''
 ARGSLS=("$@")
 ARGS=("-lFQ" "--color" "--time-style=+%y-%m-%d %H:%M")
