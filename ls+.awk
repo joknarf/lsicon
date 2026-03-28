@@ -83,8 +83,8 @@ BEGIN {
 $0=="" { print_ls(); print ""; next }
 /^total / { total_line=$0; next }
 {
-  if (/\x1b\[1m/) missing=1; else missing=0
-  gsub(/^ +|\x1b\[1?[mK]/, "") # leading spaces/ANSI codes
+  if (/\x1b\[0?1m/) missing=1; else missing=0
+  gsub(/^ +|\x1b\[0?1?[mK]/, "") # leading spaces/ANSI codes
 }
 {
   c=1
@@ -104,7 +104,10 @@ $0=="" { print_ls(); print ""; next }
     match(file_i, /^"(([^"\\]|\\.)*)"/)
     fname=substr(file_i, RSTART + 1, RLENGTH - 2)
     b=length(fname)+8 # "fname" -> " 
-    if (flag_l) target=unescape(substr(file_i,b,length(file_i)-b))
+    if (flag_l) {
+        if (substr(file_i,b,1)=="\"") b++ # rust regression
+        target=unescape(substr(file_i,b,length(file_i)-b))
+    }
     if (missing) c_link=C_IND["?"] "_bg"
     else if (indicator in C_IND) c_link="l" C_IND[indicator]
     else c_link="l" C_TYPE["-"]
