@@ -78,7 +78,7 @@ BEGIN {
   init_theme()
 }
 # handle ls error messages
-/^(ls|gls):/ { print_ls();print colors["lred"] $0 RESET >"/dev/stderr"; next }
+/^(ls|gls|gnuls):/ { print_ls();print colors["lred"] $0 RESET >"/dev/stderr"; next }
 /^"/{ gsub(/^"|\\|":$/,""); print $0":"; next }
 $0=="" { print_ls(); print ""; next }
 /^total / { total_line=$0; next }
