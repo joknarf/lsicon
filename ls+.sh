@@ -19,8 +19,8 @@ Environment var:
     LSI_HIDE_TREE=<pattern> : can be set to default hide dir/files matching pattern in tree
     eg.: export LSI_HIDE_TREE='__pycache__|venv'
 
-To see ls help: \ls --help
 "
+    $ls --help
     exit 0
 }
 ls="ls"
