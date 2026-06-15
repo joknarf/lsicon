@@ -1,6 +1,13 @@
 # ls+.awk
 # Author: joknarf
 
+function len(s,  n, t) {
+  n=0
+  # utf-8 ~range
+  if (bbox) n=split(s,t,/[¿-Ј]/)-1
+  return length(s)-n
+}
+
 function print_multic() {
 # multicolumn output
   if (!n) return
@@ -65,7 +72,7 @@ function print_long() {
     printf("%s ", lcol perms_type RESET c_perms_owner perms_owner c_perms_group perms_group lcol perms_other perms_acl)
     if (!(flag_g)) printf("%s%-"max_owner"s ", c_owner, owner_a[i])
     if (!(flag_G)) printf("%s%-"max_group"s ", c_group, group_a[i])
-    if (flag_Z) printf(" %s%-"max_context"s", c_context, context_a[i])
+    if (flag_Z) printf(" %s%-"max_ctx"s", c_ctx, ctx_a[i])
     printf(" %s%"max_size"s %s %s\n", c_size, size_a[i], c_date date_a[i], name_a[i])
   }
 }
@@ -91,7 +98,7 @@ $0=="" { print_ls(); print ""; next }
   if (flag_i) inum=$(c++)
   if (flag_s) sizeb=$(c++)
   perms=$(c++); links=$(c++); owner=$(c++); group=$(c++);
-  if (flag_Z) context=$(c++)
+  if (flag_Z) ctx=$(c++)
   type=substr(perms,1,1)
   if (type=="c" || type=="b") size=$(c++)" "$(c++)
   else size=$(c++)
@@ -130,27 +137,28 @@ $0=="" { print_ls(); print ""; next }
     if (ext in I_EXT) icon=I_EXT[ext]
   }
   ++n
-  vlen=length(fname)+2
   if (fname ~ /^\./) c_fname = colors[col]
   else c_fname=colors["l"col]
-  if (vlen>maxw) maxw=vlen
-  if (n==1 || vlen < minw) minw=vlen
   display_name=fname
   if (flag_l) {
     if (target) display_name=display_name " -> " ESC"?7l" colors[c_link] target ESC"?7h"
-    if (length(inum)>max_inums) max_inums=length(inum)
-    #if (length(links)>max_links) max_links=length(links)
-    if (length(owner)>max_owner) max_owner=length(owner)
-    if (length(group)>max_group) max_group=length(group)
-    if (length(size)>max_size) max_size=length(size)
-    if (length(sizeb)>max_size) max_size=length(sizeb)
-    if (length(context)>max_context) max_context=length(context)
-    inums_a[n]=inum; perms_a[n]=perms;  owner_a[n]=owner; group_a[n]=group; size_a[n]=size;
-    date_a[n]=date; context_a[n]=context; sizeb_a[n]=sizeb; #links_a[n]=links;
-  } else
+    l=length(inum) ; if (l>max_inums) max_inums=l
+    l=length(owner); if (l>max_owner) max_owner=l
+    l=length(group); if (l>max_group) max_group=l
+    l=length(size) ; if (l>max_size)  max_size=l
+    l=length(sizeb); if (l>max_size)  max_size=l
+    l=length(ctx)  ; if (l>max_ctx)   max_ctx=l
+    inums_a[n]=inum; perms_a[n]=perms; owner_a[n]=owner; group_a[n]=group; size_a[n]=size;
+    date_a[n]=date; ctx_a[n]=ctx; sizeb_a[n]=sizeb; #links_a[n]=links;
+  } else {
+    vlen=len(fname)+2
+    if (vlen>maxw) maxw=vlen
+    if (n==1 || vlen < minw) minw=vlen
     if (missing) c_fname=colors[C_IND["?"] "_bg"]
+    vlen_a[n]=vlen;
+  }
   fname=c_fname icon " " display_name RESET
-  name_a[n]=fname; vlen_a[n]=vlen; cols_a[n]=col
+  name_a[n]=fname; cols_a[n]=col
 }
 END {
   if (flag_l) print_long()
