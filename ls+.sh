@@ -31,7 +31,7 @@ USER_ID=$(id -un 2>/dev/null)
 COLOR=''
 ARGSLS=("$@")
 ARGS=(-lFQ --full-time)
-[[ "$box" = *box* ]] && ARGS+=(--color=never) || ARGS+=(--color)
+[[ "$box" = *box* ]] && bbox=1 && ARGS+=(--color=never) || ARGS+=(--color)
 ARGSTR=(-pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
 FLAGS=()
 TREE=false
@@ -131,5 +131,5 @@ if $TREE ;then
 else
     export LS_COLORS="rs=:di=:ln=:mh=:pi=:so=:do=:bd=:cd=:or=:mi=1:su=:sg=:ca=:tw=:ow=:st=:ex=:"
     $ls -1 "${ARGS[@]}" 2>&1 | $awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
-        -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -v PATTERN="$PATTERN" -f "$LSI/ls+.com.awk" -f "$LSI/ls+.awk"
+        -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -v PATTERN="$PATTERN" -v bbox="$bbox" -f "$LSI/ls+.com.awk" -f "$LSI/ls+.awk"
 fi
