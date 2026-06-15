@@ -1,11 +1,11 @@
 # ls+.awk
 # Author: joknarf
 
-function len(s,  n, t) {
-  n=0
+function len(s,  n) {
+  n=length(s)
   # utf-8 ~range
-  if (bbox) n=split(s,t,/[¿-Ј]/)-1
-  return length(s)-n
+  if (bbox) n-=gsub(/[¿-Ј]/, "&", s)
+  return n
 }
 
 function print_multic() {
