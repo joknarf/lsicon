@@ -38,7 +38,7 @@ function print_multic() {
     for (c=0;c<C;c++) {
       i=c*R+r
       if (i>n) break
-      printf("%s%*s", name_a[i], colw[c]-vlen_a[i]+pad, "")
+      printf("%s%"colw[c]-vlen_a[i]+pad"s", name_a[i], "")
     }
     printf("\n")
   }
@@ -47,8 +47,8 @@ function print_long() {
   if (total_line) print total_line
   total_line=""
   for (i=1;i<=n;i++) {
-    if (flag_i) printf("%s%*s ", c_inum, max_inums, inums_a[i])
-    if (flag_s) printf("%s%*s ", c_size, max_size, sizeb_a[i])
+    if (flag_i) printf("%s%"max_inums"s ", c_inum, inums_a[i])
+    if (flag_s) printf("%s%"max_size"s ", c_size, sizeb_a[i])
     col=colors[cols_a[i]]
     lcol=colors["l" cols_a[i]]
     perms=perms_a[i]
@@ -63,10 +63,10 @@ function print_long() {
     if (group_a[i] in user_groups) { c_perms_group=lcol; c_group=lc_user }
     else { c_perms_group=col; c_group=c_user }
     printf("%s ", lcol perms_type RESET c_perms_owner perms_owner c_perms_group perms_group lcol perms_other perms_acl)
-    if (!(flag_g)) printf("%s%-*s ", c_owner, max_owner, owner_a[i])
-    if (!(flag_G)) printf("%s%-*s ", c_group, max_group, group_a[i])
-    if (flag_Z) printf(" %s%-*s", c_context, max_context, context_a[i])
-    printf(" %s%*s %s %s\n", c_size, max_size, size_a[i], c_date date_a[i], name_a[i])
+    if (!(flag_g)) printf("%s%-"max_owner"s ", c_owner, owner_a[i])
+    if (!(flag_G)) printf("%s%-"max_group"s ", c_group, group_a[i])
+    if (flag_Z) printf(" %s%-"max_context"s", c_context, context_a[i])
+    printf(" %s%"max_size"s %s %s\n", c_size, size_a[i], c_date date_a[i], name_a[i])
   }
 }
 function print_ls() {
@@ -96,6 +96,7 @@ $0=="" { print_ls(); print ""; next }
   if (type=="c" || type=="b") size=$(c++)" "$(c++)
   else size=$(c++)
   date=$(c++) " " $c
+  sub(":..([.].*|$)","",date)
   file_i=substr($0, index($0, "\""))
   indicator=substr(file_i,length(file_i))
   if (indicator!="\"") file_i=substr(file_i, 1, length(file_i)-1)

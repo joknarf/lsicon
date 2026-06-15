@@ -20,19 +20,18 @@ Environment var:
     eg.: export LSI_HIDE_TREE='__pycache__|venv'
 
 "
-    $ls --help
+    $ls "$1"
     exit 0
 }
-ls="ls"
-type gls >/dev/null 2>&1 && ls="gls"
-type gnuls >/dev/null 2>&1 && ls="gnuls"
-awk=awk
-type gawk >/dev/null 2>&1 && awk="gawk"
+read ls <<<"$(type -p gnuls gls ls)"
+read box <<<"$(readlink -f $ls)"
+read awk <<<"$(type -p gnuawk gawk awk)"
 USER_GROUPS=$(id -Gn 2>/dev/null)
 USER_ID=$(id -un 2>/dev/null)
 COLOR=''
 ARGSLS=("$@")
-ARGS=("-lFQ" "--color" "--time-style=+%y-%m-%d %H:%M")
+ARGS=(-lFQ --full-time)
+[[ "$box" = *box* ]] && ARGS+=(--color=never) || ARGS+=(--color)
 ARGSTR=(-pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
 FLAGS=()
 TREE=false
