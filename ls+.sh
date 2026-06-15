@@ -24,14 +24,16 @@ Environment var:
     exit 0
 }
 read ls <<<"$(type -p gnuls gls ls)"
-read box <<<"$(readlink -f $ls)"
+read lsbox <<<"$(readlink -f $ls)"
 read awk <<<"$(type -p gawk awk)"
+read awkbox <<<"$(readlink -f $awk)"
 USER_GROUPS=$(id -Gn 2>/dev/null)
 USER_ID=$(id -un 2>/dev/null)
 COLOR=''
 ARGSLS=("$@")
 ARGS=(-lFQ --full-time)
-[[ "$box" = *box* ]] && bbox=1 && ARGS+=(--color=never) || ARGS+=(--color)
+[[ "$lsbox" = *box* ]] && ARGS+=(--color=never) || ARGS+=(--color)
+[[ "$awkbox" = *box* ]] && bbox=1
 ARGSTR=(-pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
 FLAGS=()
 TREE=false
