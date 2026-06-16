@@ -33,7 +33,8 @@ COLOR=''
 ARGSLS=("$@")
 ARGS=(-lFQ --full-time)
 [[ "$lsbox" = *box* ]] && ARGS+=(--color=never) || ARGS+=(--color)
-[[ "$awkbox" = *box* ]] && bbox=1
+awku8='u8'
+[[ "$awkbox" =~ box|mawk ]] && awku8='bb'
 ARGSTR=(-pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
 FLAGS=()
 TREE=false
@@ -132,6 +133,6 @@ if $TREE ;then
         -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -v PATTERN="$PATTERN" -f "$LSI/ls+.com.awk" -f "$LSI/ls+.tree.awk"
 else
     export LS_COLORS="rs=:di=:ln=:mh=:pi=:so=:do=:bd=:cd=:or=:mi=1:su=:sg=:ca=:tw=:ow=:st=:ex=:"
-    $ls -1 "${ARGS[@]}" 2>&1 | $awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
-        -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -v PATTERN="$PATTERN" -v bbox="$bbox" -v ls="$ls" -f "$LSI/ls+.com.awk" -f "$LSI/ls+.awk"
+    ${ls##*/} -1 "${ARGS[@]}" 2>&1 | $awk -v TERMW="$TERM_COLS" -v FLAGS="${FLAGS[*]}" -v iconfile="$ICON_FILE" -v colorfile="$COLOR_FILE" \
+        -v themefile="$THEME_FILE" -v USER="$USER_ID" -v GROUPS="$USER_GROUPS" -v PATTERN="$PATTERN" -f "$LSI/ls+.com.awk" -f "$LSI/ls+.awk" -f "$LSI/ls+.$awku8.awk"
 fi
