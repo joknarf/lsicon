@@ -26,15 +26,13 @@ Environment var:
 read ls <<<"$(type -p gnuls gls ls)"
 read lsbox <<<"$(readlink -f $ls)"
 read awk <<<"$(type -p gawk awk)"
-read awkbox <<<"$(readlink -f $awk)"
 USER_GROUPS=$(id -Gn 2>/dev/null)
 USER_ID=$(id -un 2>/dev/null)
 COLOR=''
 ARGSLS=("$@")
 ARGS=(-lFQ --full-time)
 [[ "$lsbox" = *box* ]] && ARGS+=(--color=never) || ARGS+=(--color)
-awku8='u8'
-[[ "$awkbox" =~ box|mawk ]] && awku8='bb'
+"$awk" 'BEGIN{exit(length("é")==1)}' && awku8='bb' || awku8='u8'
 ARGSTR=(-pugsDFQ --du --timefmt='%y-%m-%d %H:%M' -C)
 FLAGS=()
 TREE=false
